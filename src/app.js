@@ -17,7 +17,6 @@ app.get('/', (req, res) => {
 app.get('/config', (req, res) => {
   const { version, env } = config;
   res.send({ version, env });
-});
-
+})
 
 module.exports = app;
