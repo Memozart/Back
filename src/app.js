@@ -19,5 +19,4 @@ app.get('/config', (req, res) => {
   res.send({ version, env });
 });
 
-
 module.exports = app;
