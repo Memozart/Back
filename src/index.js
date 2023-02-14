@@ -1,5 +1,11 @@
 const app = require('./app');
 const config = require('./config');
-const port = config.port || 3000;
+const { createLogger } = require('./utils/log');
 
-app.listen(port, () => console.log(`The site is on  http://localhost:${port}`));
+const port = config.port || 3000;
+const urlBack = config.urlBack || 'http://localhost';
+const logger = createLogger();
+
+app.listen(port, () => {
+  logger.info(`Server running on  ${urlBack}:${port}`);
+});
