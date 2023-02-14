@@ -1,4 +1,5 @@
 const winston = require('winston');
+const DailyRotateFile = require('winston-daily-rotate-file');
 
 const myFormat = winston.format.printf(({ level, message, timestamp }) => {
   const date = new Date(timestamp);
@@ -8,7 +9,7 @@ const myFormat = winston.format.printf(({ level, message, timestamp }) => {
   return `${formattedDate} ${level}: ${message}`;
 });
 
-const createTransports = (fileName) => {
+const createTransports = (folderName) => {
   const transports = [
     new winston.transports.Console({
       format: winston.format.combine(
@@ -17,10 +18,12 @@ const createTransports = (fileName) => {
       ),
     }),
   ];
-  if (fileName) {
+  if (folderName) {
     transports.push(
-      new winston.transports.File({
-        filename: 'logs/' + fileName,
+      new DailyRotateFile({
+        filename:  `logs/${folderName}/%DATE%.log`,
+        datePattern: 'DD-MM-YYYY',
+        zippedArchive: true,
         format: winston.format.combine(winston.format.timestamp(), myFormat),
       })
     );
