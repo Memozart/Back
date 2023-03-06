@@ -21,7 +21,7 @@ const createTransports = (folderName) => {
   if (folderName) {
     transports.push(
       new DailyRotateFile({
-        filename:  `logs/${folderName}/%DATE%.log`,
+        filename: `logs/${folderName}/%DATE%.log`,
         datePattern: 'DD-MM-YYYY',
         zippedArchive: true,
         format: winston.format.combine(winston.format.timestamp(), myFormat),
@@ -40,4 +40,4 @@ const createLogger = (logPath) => {
   return logger;
 };
 
-module.exports = {createLogger} ;
+module.exports = { createLogger };

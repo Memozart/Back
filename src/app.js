@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const config = require('./config');
 const morganMiddleware = require('./middlewares/morgan.middleware');
+const routes = require('./routes');
 
 const app = express();
 app.use(express.json());
@@ -21,11 +22,11 @@ app.use((error, response, next) => {
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
-
 app.get('/config', (req, res) => {
   const { version, env } = config;
   res.send({ version, env });
 });
+app.use('/api', routes);
 
 // * Handle not found
 app.use((request, response) => {
