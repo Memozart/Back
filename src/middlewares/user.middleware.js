@@ -1,6 +1,7 @@
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const { errorF } = require('../utils/message');
 
 const isConnected = async (req, res, next) => {
   try {
@@ -19,7 +20,7 @@ const isConnected = async (req, res, next) => {
     req.token = token;
     next();
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    errorF(error.message, error, 401, res, next);
   }
 };
 
