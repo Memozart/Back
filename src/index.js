@@ -9,21 +9,11 @@ const logger = createLogger();
 
 mongoose.set('strictQuery', false);
 mongoose.connect(
-  `${config.db.url}${config.db.dbName}`,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    tls: true,
-    replicaSet: config.db.replicaSet,
-    authSource: config.db.authSource,
-  },
+  `${config.db.url}${config.db.dbName}?authSource=admin&replicaSet=db-mongodb-fra1-85036&tls=true`,
   () => {
     logger.info('Connected to database');
     app.listen(port, () => {
       logger.info(`Server running on ${urlBack}:${port}`);
     });
-  },
-  (error) => {
-    logger.error(error);
   }
 );
