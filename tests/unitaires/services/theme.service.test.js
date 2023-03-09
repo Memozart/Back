@@ -18,7 +18,7 @@ describe('theme service - get', () => {
     //assert
     expect(Theme.findById).not.toHaveBeenCalled();
     await expect(callMethod).rejects.toThrow(
-      'The parameter must be number and cannot be empty'
+      'The parameter must cannot be empty'
     );
   });
 
