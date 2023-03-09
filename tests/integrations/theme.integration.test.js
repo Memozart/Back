@@ -39,7 +39,7 @@ describe('Integration: fetch one theme by id', () => {
 
     // act
     const response = await request(app)
-      .get(`/api/theme/${themeId1}`)
+      .get(`/api/themes/${themeId1}`)
       .then((response) => {
         return response;
       });
@@ -84,7 +84,7 @@ describe('Integration: fetch all theme', () => {
 
     // act
     const response = await request(app)
-      .get('/api/theme')
+      .get('/api/themes')
       .then((response) => {
         return response;
       });

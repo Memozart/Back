@@ -26,7 +26,7 @@ describe('theme controller - get', () => {
 
     //act
     const response = await request(app)
-      .get(`/api/theme/${idParams}`)
+      .get(`/api/themes/${idParams}`)
       .then((response) => {
         return response;
       });
@@ -58,7 +58,7 @@ describe('theme controller - get all', () => {
 
     //act
     const { body: result } = await request(app)
-      .get('/api/theme')
+      .get('/api/themes')
       .then((response) => {
         return response;
       });

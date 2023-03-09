@@ -8,7 +8,7 @@ const defaultRoutes = [
     route: authRoutes,
   },
   {
-    path: '/theme',
+    path: '/themes',
     route: themeRoutes,
   },
 ];
