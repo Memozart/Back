@@ -9,8 +9,8 @@ const get = catchAsync(async (req, res, next) => {
 });
 
 const getAll = catchAsync(async (req, res, next) => {
-  const theme = await themeService.getAll();
-  successF('themes fetch', theme, 200, res, next);
+  const themes = await themeService.getAll();
+  successF('themes fetch', themes, 200, res, next);
 });
 
 module.exports = {

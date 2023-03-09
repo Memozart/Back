@@ -1,3 +1,9 @@
+/**
+ * method qui va verifier si un parametre est vide
+ * peut etre un string, un tableau, un objet, un map ou un set
+ * @param {*} param doit etre un string, un tableau, un objet, un map ou un set
+ * @returns true si le parametre est vide, false sinon
+ */
 const isEmpty = (param)=>{
   if (param === undefined || param === null) {
     return true;

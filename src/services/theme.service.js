@@ -8,8 +8,7 @@ const { isEmpty } = require('../utils/tool');
  */
 const get = async (id) => {
   if (isEmpty(id)) throw new Error('The parameter cannot be empty');
-  const theme = Theme.findById(id);
-  return theme;
+  return Theme.findById(id);
 };
 
 /**
@@ -17,8 +16,7 @@ const get = async (id) => {
  * @returns retourne tous les thèmes
  */
 const getAll = async () => {
-  const themes = Theme.find();
-  return themes;
+  return Theme.find();
 };
 
 module.exports = {

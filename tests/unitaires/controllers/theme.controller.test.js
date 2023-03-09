@@ -11,7 +11,7 @@ describe('theme controller - get', () => {
   let spyGet;
 
   /**
-   * Mock de la méthode get du service
+   * Mock de la méthode get du service theme
    * et retourne un theme
    */
   beforeAll(async () => {
@@ -43,7 +43,7 @@ describe('theme controller - get all', () => {
   let spyGetAll;
 
   /**
-   * Mock de la méthode get du service
+   * Mock de la méthode getAll du service theme
    * et retourne un tableau de theme
    */
   beforeAll(async () => {
