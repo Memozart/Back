@@ -1,4 +1,4 @@
-const themeService = require('../services/theme.services');
+const themeService = require('../services/theme.service');
 const catchAsync = require('../utils/catchAsync');
 const { successF } = require('../utils/message');
 

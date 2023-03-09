@@ -1,4 +1,4 @@
-const themeService = require('../../../src/services/theme.services');
+const themeService = require('../../../src/services/theme.service');
 const { Theme } = require('../../../src/models');
 
 jest.mock('../../../src/models/theme.model', () => ({

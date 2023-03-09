@@ -1,8 +1,8 @@
-const themeService = require('../../../src/services/theme.services');
+const themeService = require('../../../src/services/theme.service');
 const request = require('supertest');
 const app = require('../../../src/app');
 
-jest.mock('../../../src/services/theme.services', () => ({
+jest.mock('../../../src/services/theme.service', () => ({
   get: jest.fn(),
   getAll: jest.fn(),
 }));

@@ -1,6 +1,6 @@
-const cardService = require('../../../src/services/card.service');
+const reviewService = require('../../../src/services/review.service');
 const TIMER = require('../../../src/models/steps.model');
-const ReviewCard = require('../../../src/models/01-reviewCard');
+const ReviewCard = require('../../../src/models/review');
 
 describe('card service - next step', () => {
   test('vérifie qu\'une erreur est levé si la carte est null ou que le timer est invalide', () => {
@@ -9,7 +9,7 @@ describe('card service - next step', () => {
 
     // Act
     const callPreviousStep = () => {
-      cardService.previousStep(card);
+      reviewService.previousStep(card);
     };
 
     // Assert
@@ -29,7 +29,7 @@ describe('card service - next step', () => {
     );
 
     // Act
-    const result = cardService.nextStep(card);
+    const result = reviewService.nextStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP2);
@@ -46,7 +46,7 @@ describe('card service - next step', () => {
     );
 
     // Act
-    const result = cardService.nextStep(card);
+    const result = reviewService.nextStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP10);
@@ -60,7 +60,7 @@ describe('card service - previous step', () => {
 
     // Act
     const callPreviousStep = () => {
-      cardService.previousStep(card);
+      reviewService.previousStep(card);
     };
 
     // Assert
@@ -80,7 +80,7 @@ describe('card service - previous step', () => {
     );
 
     // Act
-    const result = cardService.previousStep(card);
+    const result = reviewService.previousStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP9);
@@ -97,7 +97,7 @@ describe('card service - previous step', () => {
     );
 
     // Act
-    const result = cardService.previousStep(card);
+    const result = reviewService.previousStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP1);
