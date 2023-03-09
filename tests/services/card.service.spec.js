@@ -1,5 +1,5 @@
-const cardService = require('../../src/services/card.service');
-const Card = require('../../src/models/card.model');
+const reviewService = require('../../src/services/review.service');
+const ReviewCard = require('../../src/models/reviewCard');
 const TIMER = require('../../src/models/steps.model');
 
 describe('card service - next step', () => {
@@ -9,7 +9,7 @@ describe('card service - next step', () => {
 
     // Act
     const callPreviousStep = () => {
-      cardService.previousStep(card);
+      reviewService.previousStep(card);
     };
 
     // Assert
@@ -20,10 +20,10 @@ describe('card service - next step', () => {
 
   test('vérifie que la méthode next step va avancer la date de représentation de la carte', () => {
     // Arrange
-    const card = new Card('question', 'reponse', 'theme', 'aide', TIMER.STEP1);
+    const card = new ReviewCard('question', 'reponse', 'theme', 'aide', TIMER.STEP1);
 
     // Act
-    const result = cardService.nextStep(card);
+    const result = reviewService.nextStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP2);
@@ -31,10 +31,10 @@ describe('card service - next step', () => {
 
   test('vérifie que la méthode next step n\'avance pas la date si on est déjà au maximum des présentations', () => {
     // Arrange
-    const card = new Card('question', 'reponse', 'theme', 'aide', TIMER.STEP10);
+    const card = new ReviewCard('question', 'reponse', 'theme', 'aide', TIMER.STEP10);
 
     // Act
-    const result = cardService.nextStep(card);
+    const result = reviewService.nextStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP10);
@@ -48,7 +48,7 @@ describe('card service - previous step', () => {
 
     // Act
     const callPreviousStep = () => {
-      cardService.previousStep(card);
+      reviewService.previousStep(card);
     };
 
     // Assert
@@ -59,10 +59,10 @@ describe('card service - previous step', () => {
 
   test('vérifie que la méthode previous step va reculer la date de représentation de la carte', () => {
     // Arrange
-    const card = new Card('question', 'reponse', 'theme', 'aide', TIMER.STEP10);
+    const card = new ReviewCard('question', 'reponse', 'theme', 'aide', TIMER.STEP10);
 
     // Act
-    const result = cardService.previousStep(card);
+    const result = reviewService.previousStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP9);
@@ -70,10 +70,10 @@ describe('card service - previous step', () => {
 
   test('vérifie que la méthode previous step ne recule pas la date si on est déjà au minimum des présentations', () => {
     // Arrange
-    const card = new Card('question', 'reponse', 'theme', 'aide', TIMER.STEP1);
+    const card = new ReviewCard('question', 'reponse', 'theme', 'aide', TIMER.STEP1);
 
     // Act
-    const result = cardService.previousStep(card);
+    const result = reviewService.previousStep(card);
 
     // Assert
     expect(result.nextPresentation).toBe(TIMER.STEP1);
