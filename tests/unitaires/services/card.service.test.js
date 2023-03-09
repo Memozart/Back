@@ -1,6 +1,6 @@
 const cardService = require('../../../src/services/card.service');
 const TIMER = require('../../../src/models/steps.model');
-const ReviewCard = require('../../../src/models/ReviewCard');
+const ReviewCard = require('../../../src/models/reviewCard');
 
 describe('card service - next step', () => {
   test('vérifie qu\'une erreur est levé si la carte est null ou que le timer est invalide', () => {
