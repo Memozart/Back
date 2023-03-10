@@ -1,10 +1,15 @@
 const router = require('express').Router();
 const authRoutes = require('./auth.route');
+const themeRoutes = require('./theme.route');
 
 const defaultRoutes = [
   {
     path: '/auth',
     route: authRoutes,
+  },
+  {
+    path: '/themes',
+    route: themeRoutes,
   },
 ];
 
