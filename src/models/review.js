@@ -1,4 +1,4 @@
-const STEPS = require('./steps.model');
+const STEPS = require('../utils/constants');
 
 /**
  * Classe représentant une carte de révision

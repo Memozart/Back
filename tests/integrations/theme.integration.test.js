@@ -6,6 +6,7 @@ const app = require('../../src/app');
 const jwt = require('jsonwebtoken');
 const config = require('../../src/config');
 const { User } = require('../../src/models');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 let mongo;
 const themeId1 = '6001c3324b3a98890c17c0ac';
@@ -22,7 +23,7 @@ describe('Integration: fetch one theme by id', () => {
     await mongoose.connect(uri);
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test' });
+    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test', currentOrganisation : new ObjectId('6111a1111a1a11111a11a1aa')});
   });
 
   // Ajouter un élément à chaque test
@@ -75,7 +76,7 @@ describe('Integration: fetch all theme', () => {
     await mongoose.connect(uri);
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test' });
+    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test', currentOrganisation : new ObjectId('6111a1111a1a11111a11a1aa') });
   });
 
   // Ajouter un élément à chaque test

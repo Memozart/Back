@@ -1,5 +1,4 @@
-const STEPS = require('../models/steps.model');
-
+const { STEPS } = require('../utils/constants');
 /**
  * Vérifie si la réponse de l'utilisateur est correcte
  * si oui, avance la date de représentation de la carte

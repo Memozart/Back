@@ -2,10 +2,14 @@ const { User } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const organisationService = require('../services/organisation.service');
+const mongoose = require('mongoose');
 
 const create = async (userBody) => {
   userBody.password = await bcrypt.hash(userBody.password, 10);
+  userBody.currentOrganisation = new mongoose.Types.ObjectId();// on génère l'id de l'organisation pour l'attribuer à l'utilisateur 1/18.4 quintillions de conflits
   const user = await User.create(userBody);
+  organisationService.createPersonnalOrganisation(user);
   user.password = undefined;
   user._id = undefined;
   return user;

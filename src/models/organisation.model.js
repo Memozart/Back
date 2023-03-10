@@ -22,7 +22,13 @@ const organisationSchema = new mongoose.Schema(
       trim: true,
       default: 'personal'
     },
-    accountTypeLimit: {
+    accountUserLimit: {
+      type: types.Number,
+      required: true,
+      trim: true,
+      default: 1
+    },
+    accountTypeId: {
       type: types.Number,
       required: true,
       trim: true,
