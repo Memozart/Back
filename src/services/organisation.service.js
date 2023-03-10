@@ -25,6 +25,8 @@ const createPersonnalOrganisation = async (user) => {
 
 
 /**
+ * 
+ * Créer une organisation de type professionnel
  * @param {*} userId l'utilisateur qui va créer l'organisation
  * @param {*} organisationName le nom de l'organisation 
  * @param {TYPE_ACCOUNT} organisationType le type d'organisation qui va être créé.
@@ -50,16 +52,16 @@ const createProfessionalOrganisation = async (userId, organisationName, organisa
  * Récupérer l'organisation (peut importe son type) par son id si l'utilisateur est présent dedans
  * sinon ne renvoi rien
  */
-const getOrganisationByUserId = async (idUser, idOrganisation) => {
-  return await Organisation.findOne({ _id: idOrganisation, users: idUser });
+const getOrganisationByUserId = async (userId, idOrganisation) => {
+  return await Organisation.findOne({ _id: idOrganisation, users: userId });
 };
 
 /**
  * Récupérer toutes les organisations dans laquel l'utilisateur est présent
  * peut importe leurs types
  */
-const getAllOrganisationsByUserId = async (idUser) => {
-  return await Organisation.find({ users: idUser });
+const getAllOrganisationsByUserId = async (userId) => {
+  return await Organisation.find({ users: userId });
 };
 
 module.exports = {
