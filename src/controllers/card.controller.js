@@ -1,6 +1,6 @@
 const cardService = require('../services/card.service');
 const catchAsync = require('../utils/catchAsync');
-const { successF } = require('../utils/message');
+const { successF, errorF } = require('../utils/message');
 
 
 const create = catchAsync(async (req, res, next) => {
@@ -17,13 +17,13 @@ const get = catchAsync(async (req, res, next) => {
 
 const getAll = catchAsync(async (req, res, next) => {
   const cards = await cardService.getAll();
-  successF('cards fetch', cards, 200, res, next)
+  successF('cards fetch', cards, 200, res, next);
 });
 
 const update = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const card = await cardService.update(id, req.body);
-  successF('cards update', card, 200, res, next)
+  successF('cards update', card, 200, res, next);
 });
 
 const remove = catchAsync(async (req, res, next) => {
@@ -32,7 +32,7 @@ const remove = catchAsync(async (req, res, next) => {
   if(statut !== true){
     errorF(statut.message, statut, 401, res, next);
   }
-  successF('cards delete', statut, 200, res, next)
+  successF('cards delete', statut, 200, res, next);
 });
 
 module.exports = {
@@ -41,5 +41,5 @@ module.exports = {
   getAll,
   update,
   remove
-}
+};
 

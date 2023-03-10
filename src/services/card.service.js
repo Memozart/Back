@@ -1,4 +1,4 @@
-const { Card } = require("../models");
+const { Card } = require('../models');
 
 const create = (card) => {
   return Card.create(card);
