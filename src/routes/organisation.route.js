@@ -6,5 +6,6 @@ router.get('/:id',userMiddleware.isConnected, organisationController.getById);
 router.get('/', userMiddleware.isConnected, organisationController.getAll);
 router.post( '/', userMiddleware.isConnected , organisationController.create);
 router.put( '/leave/:id', userMiddleware.isConnected , organisationController.leave);
+router.put( '/join/:id', userMiddleware.isConnected , organisationController.join);
 
 module.exports = router;

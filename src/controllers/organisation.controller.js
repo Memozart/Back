@@ -3,40 +3,75 @@ const catchAsync = require('../utils/catchAsync');
 const { successF } = require('../utils/message');
 const { TYPE_ACCOUNT } = require('../utils/constants');
 
-
-
-
 const create = catchAsync(async (req, res, next) => {
-  const { _id: userId } = req.user._doc || 1;/// 
+  const { id: userId } = req.user;
   const { name, type: idTypeAccount } = req.body;
-  const typeAccount = Object.values(TYPE_ACCOUNT).find(e => e.id === idTypeAccount);
-  const organisation = organisationService.createProfessionalOrganisation(userId, name, typeAccount);
-  successF(`${typeAccount.name} organisation as created`, organisation, 200, res, next);
+  const typeAccount = Object.values(TYPE_ACCOUNT).find(
+    (e) => e.id === idTypeAccount
+  );
+  const organisation = await organisationService.createProfessionalOrganisation(
+    userId,
+    name,
+    typeAccount
+  );
+  successF(
+    `${typeAccount.name} organisation as created`,
+    organisation,
+    200,
+    res,
+    next
+  );
 });
 
 const getById = catchAsync(async (req, res, next) => {
-  const userId = req.body.user.id || 1;/// 
-  const organisationId = req.params.id || 1;/// 
-  const organisation = organisationService.getOrganisationByUserId(userId, organisationId);
+  const { id: userId } = req.user;
+  const organisationId = req.params.id;
+  const organisation = await organisationService.getOrganisationByUserId(
+    userId,
+    organisationId
+  );
   successF('organisation fetch', organisation, 200, res, next);
 });
 
 const getAll = catchAsync(async (req, res, next) => {
-  const userId = req.body.user.id || 1;/// 
-  const organisations = organisationService.getAllOrganisationsByUserId(userId);
+  const { id: userId } = req.user;
+  const organisations = await organisationService.getAllOrganisationsByUserId(
+    userId
+  );
   successF('organisations fetch', organisations, 200, res, next);
 });
 
 /**
  * methode qui permet à l'utilisateur courant de quitter l'organisation
  */
-const leave = catchAsync(async () => {
-  throw new Error('not implemented');
+const leave = catchAsync(async (req, res, next) => {
+  const { id: userId } = req.user;
+  const organisationId = req.params.id;
+  const { userIdDeleted } = req.body;
+  const organisation = await organisationService.userLeaveInOrganisation(
+    userId,
+    organisationId,
+    userIdDeleted
+  );
+  successF('the user was leave the organisation fetch', organisation, 200, res, next);
+});
+
+const join = catchAsync(async (req, res, next) => {
+  const { id: userId } = req.user;
+  const organisationId = req.params.id;
+  const { userIdAdded } = req.body;
+  const organisation = await organisationService.addUserInOrganisation(
+    userId,
+    organisationId,
+    userIdAdded
+  );
+  successF('the user was join the organisation fetch', organisation, 200, res, next);
 });
 
 module.exports = {
   create,
   getById,
   getAll,
-  leave
+  leave,
+  join,
 };
