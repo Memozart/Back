@@ -8,7 +8,6 @@ const urlBack = config.urlBack || 'http://localhost';
 const logger = createLogger();
 
 mongoose.set('strictQuery', false);
-console.log(config);
 mongoose.connect(
   `${config.db.url}${config.db.dbName}?authSource=admin&replicaSet=db-mongodb-fra1-85036&tls=true`,
   () => {
