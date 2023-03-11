@@ -54,7 +54,7 @@ const createProfessionalOrganisation = async (
  * Récupérer l'organisation (peut importe son type) par son id si l'utilisateur est présent dedans
  * sinon ne renvoi rien
  */
-const getOrganisationByUserId = async (userId, idOrganisation) => {
+const getOrganisationById = async (userId, idOrganisation) => {
   return await Organisation.findOne({
     _id: idOrganisation,
     $or: [{ users: userId }, { admin: userId }],
@@ -99,11 +99,20 @@ const userLeaveInOrganisation = async (idUser, idOrga, userIdDeleted) => {
   );
 };
 
+const getOrganisationIfAdmin = async (userId, organisationId)=> {
+  const organisation = await Organisation.findOne({
+    _id: organisationId,
+    admin: userId,
+  });
+  return organisation;
+};
+
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,
-  getOrganisationByUserId,
+  getOrganisationById,
   getAllOrganisationsByUserId,
   addUserInOrganisation,
   userLeaveInOrganisation,
+  getOrganisationIfAdmin,
 };

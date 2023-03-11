@@ -26,7 +26,7 @@ const create = catchAsync(async (req, res, next) => {
 const getById = catchAsync(async (req, res, next) => {
   const { id: userId } = req.user;
   const organisationId = req.params.id;
-  const organisation = await organisationService.getOrganisationByUserId(
+  const organisation = await organisationService.getOrganisationById(
     userId,
     organisationId
   );

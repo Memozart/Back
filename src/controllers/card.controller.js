@@ -2,12 +2,12 @@ const cardService = require('../services/card.service');
 const catchAsync = require('../utils/catchAsync');
 const { successF, errorF } = require('../utils/message');
 
-
 const create = catchAsync(async (req, res, next) => {
-  const card = cardService.create(req.body);
+  const { id: userId, currentOrganisation } = req.user;
+  const idCurrentOrganisation = currentOrganisation.toString();
+  const card = await cardService.create(req.body, userId, idCurrentOrganisation);
   successF('Card created', card, 201, res, next);
 });
-
 
 const get = catchAsync(async (req, res, next) => {
   const { id } = req.params;
@@ -29,7 +29,7 @@ const update = catchAsync(async (req, res, next) => {
 const remove = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const statut = await cardService.remove(id);
-  if(statut !== true){
+  if (statut !== true) {
     errorF(statut.message, statut, 401, res, next);
   }
   successF('cards delete', statut, 200, res, next);
@@ -40,6 +40,5 @@ module.exports = {
   get,
   getAll,
   update,
-  remove
+  remove,
 };
-

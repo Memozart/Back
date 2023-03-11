@@ -1,4 +1,22 @@
 const { STEPS } = require('../utils/constants');
+const Review =require('../models/review.model');
+const moment = require('moment-timezone');
+const mongoose = require('mongoose');
+
+const createReview = (userId, organisationId, cardId, dateNextPresentation = null)=>{
+  if(!dateNextPresentation)
+    dateNextPresentation = moment.tz('Europe/Paris').startOf('day').add(1, 'day');
+  else
+    dateNextPresentation = moment.tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris').startOf('day');
+
+  return Review.create({
+    card : new mongoose.Types.ObjectId(cardId),
+    organisation : new mongoose.Types.ObjectId(organisationId),
+    user : new mongoose.Types.ObjectId(userId),
+    nextPresentation : dateNextPresentation
+  });
+};
+
 /**
  * Vérifie si la réponse de l'utilisateur est correcte
  * si oui, avance la date de représentation de la carte
@@ -53,4 +71,5 @@ module.exports = {
   checkUserAnswer,
   nextStep,
   previousStep,
+  createReview
 };

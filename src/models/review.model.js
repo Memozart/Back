@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const types = mongoose.Schema.Types;
 
-const frequenceSchema = new mongoose.Schema(
+const reviewSchema = new mongoose.Schema(
   {
     user: {
       type: types.ObjectId,
@@ -30,9 +30,9 @@ const frequenceSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-frequenceSchema.pre('save', (next) => {
+reviewSchema.pre('save', (next) => {
   next();
 });
 
-const frequence = mongoose.model('Frequence', frequenceSchema);
-module.exports = frequence;
+const review = mongoose.model('Review', reviewSchema);
+module.exports = review;
