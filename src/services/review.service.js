@@ -15,7 +15,7 @@ const mongoose = require('mongoose');
  */
 const createReview = (userId, organisationId, cardId, dateNextPresentation = null)=>{
   if(!dateNextPresentation)
-    dateNextPresentation = moment.tz('Europe/Paris').startOf('day').add(1, 'day');
+    dateNextPresentation = moment.tz('Europe/Paris').startOf('day').add(1, 'day').add(1,'hours');
   else
     dateNextPresentation = moment.tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris').startOf('day');
 
