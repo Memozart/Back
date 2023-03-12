@@ -1,29 +1,42 @@
 const { STEPS } = require('../utils/constants');
-const Review =require('../models/review.model');
+const Review = require('../models/review.model');
 const moment = require('moment-timezone');
 const mongoose = require('mongoose');
 
-
 /**
  * Methode qui créer une révision (dans la collection "review")
- * dès qu'une carte est créer 
+ * dès qu'une carte est créer
  * @param {*} userId l'utilisateur affecté à la révision
  * @param {*} organisationId l'organisation qui est affecté et qui gère la carte
  * @param {*} cardId la carte qui est affecté à la révision
  * @param {*} dateNextPresentation la date de la prochaine Présentation pour l'utilisateur
  * @returns la révision
  */
-const createReview = (userId, organisationId, cardId, dateNextPresentation = null)=>{
-  if(!dateNextPresentation)
-    dateNextPresentation = moment.tz('Europe/Paris').startOf('day').add(1, 'day').add(1,'hours');
+const createReview = (
+  userId,
+  organisationId,
+  cardId,
+  themeId,
+  dateNextPresentation = null
+) => {
+  if (!dateNextPresentation)
+    dateNextPresentation = moment
+      .tz('Europe/Paris')
+      .startOf('day')
+      .add(1, 'day')
+      .add(1, 'hours');
   else
-    dateNextPresentation = moment.tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris').startOf('day').add(1,'hours');
+    dateNextPresentation = moment
+      .tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris')
+      .startOf('day')
+      .add(1, 'hours');
 
   return Review.create({
-    card : new mongoose.Types.ObjectId(cardId),
-    organisation : new mongoose.Types.ObjectId(organisationId),
-    user : new mongoose.Types.ObjectId(userId),
-    nextPresentation : dateNextPresentation
+    card: new mongoose.Types.ObjectId(cardId),
+    organisation: new mongoose.Types.ObjectId(organisationId),
+    user: new mongoose.Types.ObjectId(userId),
+    nextPresentation: dateNextPresentation,
+    theme: new mongoose.Types.ObjectId(themeId),
   });
 };
 
@@ -31,7 +44,7 @@ const createReview = (userId, organisationId, cardId, dateNextPresentation = nul
  * Vérifie si la réponse de l'utilisateur est correcte
  * si oui, avance la date de représentation de la carte
  * sinon, recule la date de représentation de la carte
- * @param {*} reviewCard 
+ * @param {*} reviewCard
  * @returns le statut de la réponse avec la bonne réponse
  */
 const checkUserAnswer = (reviewCard) => {
@@ -81,5 +94,5 @@ module.exports = {
   checkUserAnswer,
   nextStep,
   previousStep,
-  createReview
+  createReview,
 };

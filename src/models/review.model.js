@@ -21,6 +21,12 @@ const reviewSchema = new mongoose.Schema(
       trim: true,
       ref:'Card'
     },
+    theme: {
+      type: types.ObjectId,
+      required: true,
+      trim: true,
+      ref:'Theme'
+    },
     nextPresentation: {
       type: types.Date,
       required: true,
