@@ -20,6 +20,7 @@ const create = async (cardBody, userId, organisationId) => {
       'You did not add card because you are not an admin of organisation'
     );
   }
+  const {datePresentation } = cardBody;
   const card = await Card.create(cardBody);
 
   await organisationService.addCardToOrganisation(userId, organisationId, card.id);
@@ -27,7 +28,7 @@ const create = async (cardBody, userId, organisationId) => {
   // ajout pour chaque utilisateur de l'organisation une review
   const allUsers = organisation.users.concat(organisation.admin);
   const reviewCards = allUsers.map(async (user) => {
-    await reviewService.createReview(user, organisationId, card.id);
+    await reviewService.createReview(user, organisationId, card.id, datePresentation);
   });
 
   await Promise.all(reviewCards);

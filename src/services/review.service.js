@@ -17,7 +17,7 @@ const createReview = (userId, organisationId, cardId, dateNextPresentation = nul
   if(!dateNextPresentation)
     dateNextPresentation = moment.tz('Europe/Paris').startOf('day').add(1, 'day').add(1,'hours');
   else
-    dateNextPresentation = moment.tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris').startOf('day');
+    dateNextPresentation = moment.tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris').startOf('day').add(1,'hours');
 
   return Review.create({
     card : new mongoose.Types.ObjectId(cardId),
