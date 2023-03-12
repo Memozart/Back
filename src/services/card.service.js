@@ -49,8 +49,7 @@ const update = (id, card) => {
 
 const remove = (id) => {
   try {
-    Card.findByIdAndDelete(id);
-    return true;
+    return Card.findByIdAndDelete(id);
   } catch (error) {
     return error;
   }
