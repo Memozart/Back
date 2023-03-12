@@ -78,24 +78,20 @@ organisationSchema.pre('findOneAndUpdate', async function (next) {
   }
 
   // si la mise à jour concerne un ajout dans le champ "users"
-  if (this.getUpdate().$push?.users) {
-    const userIdToAdd = this.getUpdate().$push?.users;
+  // récupère l'id sinon undefined
+  const userIdToAdd = this.getUpdate().$push?.users;
 
-
-    if (!userIdToAdd) {
-      return next();
-    }
-
+  if (userIdToAdd) {
     if (orga.admin.includes(userIdToAdd) || orga.users.includes(userIdToAdd)) {
       throw new Error('User already exists in organisation');
     }
-    
+
     // Vérifier que le nombre d'utilisateurs ne dépasse pas la limite
     const totalUsersCount = orga.users.length + orga.admin.length + 1;
 
     if (totalUsersCount > orga.accountUserLimit) {
       throw new Error(
-        `User limit reached ${orga.accountUserLimit} you can upgrade your account`
+        `User limit reached ${orga.accountUserLimit}! Upgrade your account`
       );
     }
     return next();

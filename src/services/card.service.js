@@ -2,6 +2,15 @@ const { Card } = require('../models');
 const reviewService = require('./review.service');
 const organisationService = require('./organisation.service');
 
+
+/**
+ * Créer un carte si le demandeur est admin de l'organisation
+ * et créer une révision à tous les membres de cette organisation.
+ * @param {*} cardBody les informations obligatoires d'une carte
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @param {*} organisationId l'organisation dans laquelle l'utilisateur va ajouter la carte 
+ * @returns 
+ */
 const create = async (cardBody, userId, organisationId) => {
 
   const organisation  = await organisationService.getOrganisationIfAdmin(userId, organisationId);

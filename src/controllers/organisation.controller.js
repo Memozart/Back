@@ -53,7 +53,7 @@ const leave = catchAsync(async (req, res, next) => {
     organisationId,
     userIdDeleted
   );
-  successF('the user was leave the organisation fetch', organisation, 200, res, next);
+  successF('the user was leave the organisation', organisation, 200, res, next);
 });
 
 const join = catchAsync(async (req, res, next) => {
@@ -65,7 +65,7 @@ const join = catchAsync(async (req, res, next) => {
     organisationId,
     userIdAdded
   );
-  successF('the user was join the organisation fetch', organisation, 200, res, next);
+  successF('the user was join the organisation', organisation, 200, res, next);
 });
 
 module.exports = {

@@ -7,7 +7,9 @@ const mongoose = require('mongoose');
 
 const create = async (userBody) => {
   userBody.password = await bcrypt.hash(userBody.password, 10);
-  userBody.currentOrganisation = new mongoose.Types.ObjectId();// on génère l'id de l'organisation pour l'attribuer à l'utilisateur 1/18.4 quintillions de conflits
+  // on génère l'id de l'organisation pour l'attribuer à l'utilisateur 
+  // 1/18.4 quintillions de conflits
+  userBody.currentOrganisation = new mongoose.Types.ObjectId();
   const user = await User.create(userBody);
   organisationService.createPersonnalOrganisation(user);
   user.password = undefined;

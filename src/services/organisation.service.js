@@ -6,8 +6,8 @@ const logger = createLogger();
 
 /**
  * permets de créer l'espace personnel (qui est une organisation de type 1)
- * @param {*} userId l'utilisateur
- * @returns
+ * @param {*} userId l'utilisateur qui sera administrateur de l'organisation
+ * @returns l'organisation crée
  */
 const createPersonnalOrganisation = async (user) => {
   return Organisation.create({
@@ -22,8 +22,7 @@ const createPersonnalOrganisation = async (user) => {
 };
 
 /**
- *
- * Créer une organisation de type professionnel
+ * Créer une organisation de type professionnel (voir TYPE_ACCOUNT)
  * @param {*} userId l'utilisateur qui va créer l'organisation
  * @param {*} organisationName le nom de l'organisation
  * @param {TYPE_ACCOUNT} organisationType le type d'organisation qui va être créé.
@@ -51,19 +50,39 @@ const createProfessionalOrganisation = async (
 };
 
 /**
- * Récupérer l'organisation (peut importe son type) par son id si l'utilisateur est présent dedans
- * sinon ne renvoi rien
+ * 
+ * Récupérer les informations de l'organisation (peut importe son type) par son id 
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @param {*} organisationId l'organisation qui doit être récupérer
+ * @returns l'organisation si l'utilisateur est PRÉSENT sinon rien
  */
-const getOrganisationById = async (userId, idOrganisation) => {
+const getOrganisationById = async (userId, organisationId) => {
   return await Organisation.findOne({
-    _id: idOrganisation,
+    _id: organisationId,
     $or: [{ users: userId }, { admin: userId }],
   });
 };
 
 /**
+ * Récupérer les informations de l'organisation (peut importe son type) par son id 
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @param {*} organisationId l'organisation qui doit être récupérer 
+ * @returns l'organisation si l'utilisateur est ADMINISTRATEUR sinon rien
+ */
+const getOrganisationIfAdmin = async (userId, organisationId)=> {
+  const organisation = await Organisation.findOne({
+    _id: organisationId,
+    admin: userId,
+  });
+  return organisation;
+};
+
+
+/**
  * Récupérer toutes les organisations dans laquel l'utilisateur est présent
  * peut importe leurs types
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @returns les organisations dans laquelle l'utilisateur est PRÉSENT sinon rien
  */
 const getAllOrganisationsByUserId = async (userId) => {
   return await Organisation.find({
@@ -71,12 +90,18 @@ const getAllOrganisationsByUserId = async (userId) => {
   });
 };
 
-// /**
-//  * Ajoute un utilisateur dans l'organisation
-//  */
-const addUserInOrganisation = async (idUser, idOrga, userIdAdded) => {
+/**
+ * Ajoute un utilisateur dans l'organisation
+ * 
+ * ⚠ passe par un pre 'findOneAndUpdate' dans le model organisation avant la requete
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter 
+ * @param {*} userIdAdded  l'utilisateur à ajouter
+ * @returns l'organisation avec la nouvelle personne ajouté (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
+ */
+const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
   return Organisation.findOneAndUpdate(
-    { _id: idOrga, admin: idUser },
+    { _id: organisationId, admin: userId },
     { $push: { users: userIdAdded } },
     {
       new: true, // return the updated document instead of the original
@@ -85,12 +110,18 @@ const addUserInOrganisation = async (idUser, idOrga, userIdAdded) => {
   );
 };
 
-// /**
-//  * supprime un utilisateur de l'organisation
-//  */
-const userLeaveInOrganisation = async (idUser, idOrga, userIdDeleted) => {
+/**
+ * supprime un utilisateur de l'organisation
+ * 
+ * ⚠ passe par un pre 'findOneAndUpdate' dans le model organisation avant la requete
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter 
+ * @param {*} userIdAdded  l'utilisateur à supprimer
+ * @returns l'organisation sans la personne (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
+ */
+const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) => {
   return Organisation.findOneAndUpdate(
-    { _id: idOrga, admin: idUser },
+    { _id: organisationId, admin: userId },
     { $pull: { users: userIdDeleted } },
     {
       new: true, // return the updated document instead of the original
@@ -99,13 +130,6 @@ const userLeaveInOrganisation = async (idUser, idOrga, userIdDeleted) => {
   );
 };
 
-const getOrganisationIfAdmin = async (userId, organisationId)=> {
-  const organisation = await Organisation.findOne({
-    _id: organisationId,
-    admin: userId,
-  });
-  return organisation;
-};
 
 module.exports = {
   createPersonnalOrganisation,

@@ -3,6 +3,16 @@ const Review =require('../models/review.model');
 const moment = require('moment-timezone');
 const mongoose = require('mongoose');
 
+
+/**
+ * Methode qui créer une révision (dans la collection "review")
+ * dès qu'une carte est créer 
+ * @param {*} userId l'utilisateur affecté à la révision
+ * @param {*} organisationId l'organisation qui est affecté et qui gère la carte
+ * @param {*} cardId la carte qui est affecté à la révision
+ * @param {*} dateNextPresentation la date de la prochaine Présentation pour l'utilisateur
+ * @returns la révision
+ */
 const createReview = (userId, organisationId, cardId, dateNextPresentation = null)=>{
   if(!dateNextPresentation)
     dateNextPresentation = moment.tz('Europe/Paris').startOf('day').add(1, 'day');
@@ -22,7 +32,7 @@ const createReview = (userId, organisationId, cardId, dateNextPresentation = nul
  * si oui, avance la date de représentation de la carte
  * sinon, recule la date de représentation de la carte
  * @param {*} reviewCard 
- * @returns 
+ * @returns le statut de la réponse avec la bonne réponse
  */
 const checkUserAnswer = (reviewCard) => {
   return reviewCard;
