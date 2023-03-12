@@ -51,7 +51,7 @@ const createProfessionalOrganisation = async (
 
 /**
  * 
- * Récupérer les informations de l'organisation (peut importe son type) par son id 
+ * Récupérer les informations non confidentielle de l'organisation (peut importe son type) par son id 
  * @param {*} userId l'utilisateur qui réalise la demande
  * @param {*} organisationId l'organisation qui doit être récupérer
  * @returns l'organisation si l'utilisateur est PRÉSENT sinon rien
@@ -130,7 +130,27 @@ const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) =>
   );
 };
 
+const addCardToOrganisation = async(userId, organisationId, cardId)=>{
+  return Organisation.findOneAndUpdate(
+    { _id: organisationId, admin: userId },
+    { $push: { cards: cardId } },
+    {
+      new: true, // return the updated document instead of the original
+      runValidators: true, // run pre query on schema
+    }
+  );
+};
 
+const removeCardToOrganisation = async(userId, organisationId, cardId)=>{
+  return Organisation.findOneAndUpdate(
+    { _id: organisationId, admin: userId },
+    { $pull: { card: cardId } },
+    {
+      new: true, // return the updated document instead of the original
+      runValidators: true, // run pre query on schema
+    }
+  );
+};
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,
@@ -139,4 +159,6 @@ module.exports = {
   addUserInOrganisation,
   userLeaveInOrganisation,
   getOrganisationIfAdmin,
+  addCardToOrganisation,
+  removeCardToOrganisation
 };
