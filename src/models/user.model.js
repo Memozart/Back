@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    currentOrganisation: {
+      type: types.ObjectId,
+      required: true,
+      trim: true,
+      ref :'Organisation'
+    },
   },
   { versionKey: false }
 );

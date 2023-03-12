@@ -1,5 +1,5 @@
 const reviewService = require('../../../src/services/review.service');
-const TIMER = require('../../../src/models/steps.model');
+const { STEPS } = require('../../../src/utils/constants');
 const ReviewCard = require('../../../src/models/review');
 
 describe('card service - next step', () => {
@@ -25,14 +25,14 @@ describe('card service - next step', () => {
       'reponse',
       'theme',
       'aide',
-      TIMER.STEP1
+      STEPS.STEP1
     );
 
     // Act
     const result = reviewService.nextStep(card);
 
     // Assert
-    expect(result.nextPresentation).toBe(TIMER.STEP2);
+    expect(result.nextPresentation).toBe(STEPS.STEP2);
   });
 
   test('vérifie que la méthode next step n\'avance pas la date si on est déjà au maximum des présentations', () => {
@@ -42,14 +42,14 @@ describe('card service - next step', () => {
       'reponse',
       'theme',
       'aide',
-      TIMER.STEP10
+      STEPS.STEP10
     );
 
     // Act
     const result = reviewService.nextStep(card);
 
     // Assert
-    expect(result.nextPresentation).toBe(TIMER.STEP10);
+    expect(result.nextPresentation).toBe(STEPS.STEP10);
   });
 });
 
@@ -76,14 +76,14 @@ describe('card service - previous step', () => {
       'reponse',
       'theme',
       'aide',
-      TIMER.STEP10
+      STEPS.STEP10
     );
 
     // Act
     const result = reviewService.previousStep(card);
 
     // Assert
-    expect(result.nextPresentation).toBe(TIMER.STEP9);
+    expect(result.nextPresentation).toBe(STEPS.STEP9);
   });
 
   test('vérifie que la méthode previous step ne recule pas la date si on est déjà au minimum des présentations', () => {
@@ -93,13 +93,13 @@ describe('card service - previous step', () => {
       'reponse',
       'theme',
       'aide',
-      TIMER.STEP1
+      STEPS.STEP1
     );
 
     // Act
     const result = reviewService.previousStep(card);
 
     // Assert
-    expect(result.nextPresentation).toBe(TIMER.STEP1);
+    expect(result.nextPresentation).toBe(STEPS.STEP1);
   });
 });
