@@ -32,6 +32,12 @@ const reviewSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    step: {
+      type: types.ObjectId,
+      required: true,
+      trim: true,
+      ref:'Step'
+    },
   },
   { versionKey: false }
 );
