@@ -23,6 +23,14 @@ const isEmpty = (param)=>{
   return false;
 };
 
+const getUserIdAndOrganisationId = (req) =>{
+  const { id: userId, currentOrganisation } = req.user;
+  const currentOrganisationId = currentOrganisation?.toString();
+  return { userId , currentOrganisationId };
+};
+
+
 module.exports = {
-  isEmpty
+  isEmpty,
+  getUserIdAndOrganisationId
 };

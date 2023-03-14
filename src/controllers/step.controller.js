@@ -2,10 +2,10 @@ const stepService = require('../services/step.service');
 const catchAsync = require('../utils/catchAsync');
 const { successF } = require('../utils/message');
 
-// const create = catchAsync(async (req, res, next) => {
-//   const step = await stepService.create(req.body);
-//   successF('step created', step, 201, res, next);
-// });
+const create = catchAsync(async (req, res, next) => {
+  const step = await stepService.create(req.body);
+  successF('step created', step, 201, res, next);
+});
 
 const get = catchAsync(async (req, res, next) => {
   const { id } = req.params;
@@ -31,7 +31,7 @@ const getAll = catchAsync(async (req, res, next) => {
 // });
 
 module.exports = {
-  // create,
+  create,
   get,
   getAll,
   // update,

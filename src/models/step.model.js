@@ -21,6 +21,12 @@ const stepSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+    order: {
+      type: types.Number,
+      required: true,
+      trim: true,
+      unique: true,
+    },
   },
   { versionKey: false }
 );

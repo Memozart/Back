@@ -1,4 +1,5 @@
 const Review = require('../models/review.model');
+const Step = require('../models/step.model');
 const moment = require('moment-timezone');
 const mongoose = require('mongoose');
 
@@ -36,7 +37,7 @@ const createReview = (
     user: new mongoose.Types.ObjectId(userId),
     nextPresentation: dateNextPresentation,
     theme: new mongoose.Types.ObjectId(themeId),
-    step : new mongoose.Types.ObjectId('640f9ba0334e910d6ed41e67') // step one
+    step: new mongoose.Types.ObjectId('640f9ba0334e910d6ed41e67'), // step one
   });
 };
 
@@ -64,18 +65,17 @@ const getOldestReviewByTheme = async (
     .limit(pageSize)
     .populate({
       path: 'card',
-      select: '-answer -theme' // exclut le champs 'réponse'
+      select: '-answer -theme', // exclut le champs 'réponse'
     })
     .populate({
       path: 'organisation',
-      select: 'name' // inclus uniquement le champs 'name'
+      select: 'name', // inclus uniquement le champs 'name'
     })
     .lean();
 
   const hasNext = page < totalPages;
   const queryResult = reviews && reviews.length == 1 ? reviews[0] : null;
-  if(!queryResult)
-    return null;
+  if (!queryResult) return null;
   return { queryResult, hasNext, totalPages, currentPage: page };
 };
 
@@ -86,8 +86,64 @@ const getOldestReviewByTheme = async (
  * @param {*} reviewCard
  * @returns le statut de la réponse avec la bonne réponse
  */
-const checkUserAnswer = (reviewCard) => {
-  return reviewCard;
+const checkUserAnswer = async (
+  userId,
+  currentOrganisationId,
+  reviewId,
+  userAnswer
+) => {
+  const review = await Review.findOne({
+    user: userId,
+    organisation: currentOrganisationId,
+    _id: reviewId,
+  })
+    .populate(['theme', 'step'])
+    .populate({
+      path: 'card',
+      select: '-theme', // exclut le champs 'réponse'
+    })
+    .populate({
+      path: 'organisation',
+      select: 'name', // inclus uniquement le champs 'name'
+    })
+    .lean();
+
+  const steps = await Step.find();
+
+  const { card, theme } = review;
+  if (card.answer.toLowerCase() == userAnswer.toLowerCase()) {
+    const reviewed = nextStep(review, steps);
+    const newReview = getOldestReviewByTheme(
+      userId,
+      currentOrganisationId,
+      theme._id
+    );
+    return {
+      statusResponse: {
+        success: false,
+        dayNextPresentation: reviewed.step.day,
+      },
+      newReview,
+    };
+  } else {
+    const reviewed = await previousStep(review, steps);
+    const newReview = await getOldestReviewByTheme(
+      userId,
+      currentOrganisationId,
+      theme._id
+    );
+    return {
+      statusResponse: {
+        success: false,
+        feedback: {
+          userAnswer : userAnswer,
+          goodAnswer : card.answer
+        },
+        dayNextPresentation: reviewed.step.day,
+      },
+      newReview,
+    };
+  }
 };
 
 // /**
@@ -95,44 +151,71 @@ const checkUserAnswer = (reviewCard) => {
 //  * @param {*} card carte à modifier
 //  * @returns retourne la carte avec la date de représentation avancée
 //  */
-// const nextStep = (reviewCard) => {
-//   if (reviewCard == null || reviewCard.nextPresentation == null)
-//     throw new Error('La carte est vide ou le step est invalide');
-//   const currentStepIndex = Object.values(STEPS).findIndex(
-//     (step) => step.id === reviewCard.nextPresentation.id
-//   );
-//   const nextStep =
-//     currentStepIndex === Object.values(STEPS).length - 1
-//       ? STEPS.STEP10
-//       : Object.values(STEPS)[currentStepIndex + 1];
-//   reviewCard.nextPresentation = nextStep;
-//   return reviewCard;
-// };
+const nextStep = async (review, steps) => {
+  if (review == null || review.nextPresentation == null)
+    throw new Error('La carte est vide ou le step est invalide');
+
+  const { order } = review.step;
+  if (order == 10) {
+    const step = steps.find((step) => step.order === order);
+    const { day, _id } = step;
+    const dateNextPresentation = moment
+      .tz('Europe/Paris')
+      .startOf('day')
+      .add(day, 'day')
+      .add(1, 'hours');
+    review.step = _id;
+    review.nextPresentation = dateNextPresentation;
+  } else {
+    const step = steps.find((step) => step.order === order + 1);
+    const { day, _id } = step;
+    const dateNextPresentation = moment
+      .tz('Europe/Paris')
+      .startOf('day')
+      .add(day, 'day')
+      .add(1, 'hours');
+    review.step = _id;
+    review.nextPresentation = dateNextPresentation;
+  }
+  return await Review.findByIdAndUpdate(review._id, review, { new: true });
+};
 
 // /**
 //  * en cas de réponse fausse, permets de reculer la date de représentation de la carte
 //  * @param {*} reviewCard carte à modifier
 //  * @returns retourne la carte avec la date de représentation reculée
 //  */
-// const previousStep = (reviewCard) => {
-//   if (reviewCard == null || reviewCard.nextPresentation == null)
-//     throw new Error('La carte est vide ou le step est invalide');
+const previousStep = async (review, steps) => {
+  if (review == null || review.nextPresentation == null)
+    throw new Error('La carte est vide ou le step est invalide');
 
-//   const currentStepIndex = Object.values(STEPS).findIndex(
-//     (step) => step.id === reviewCard.nextPresentation.id
-//   );
-//   const previousStep =
-//     currentStepIndex === 0
-//       ? STEPS.STEP1
-//       : Object.values(STEPS)[currentStepIndex - 1];
-//   reviewCard.nextPresentation = previousStep;
-//   return reviewCard;
-// };
+  const { order } = review.step;
+  if (order == 1) {
+    const dateNextPresentation = moment
+      .tz('Europe/Paris')
+      .startOf('day')
+      .add(1, 'day')
+      .add(1, 'hours');
+    review.nextPresentation = dateNextPresentation;
+  } else {
+    const step = steps.find((step) => step.order === order - 1);
+    const { day, _id } = step;
+    const dateNextPresentation = moment
+      .tz('Europe/Paris')
+      .startOf('day')
+      .add(day, 'day')
+      .add(1, 'hours');
+    review.step = _id;
+    review.nextPresentation = dateNextPresentation;
+  }
+
+  return await Review.findByIdAndUpdate(review._id, review, { new: true });
+};
 
 module.exports = {
   checkUserAnswer,
-  // nextStep,
-  // previousStep,
+  nextStep,
+  previousStep,
   createReview,
   getOldestReviewByTheme,
 };
