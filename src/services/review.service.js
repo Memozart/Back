@@ -112,8 +112,8 @@ const checkUserAnswer = async (
 
   const { card, theme } = review;
   if (card.answer.toLowerCase() == userAnswer.toLowerCase()) {
-    const reviewed = nextStep(review, steps);
-    const newReview = getOldestReviewByTheme(
+    const reviewed = await nextStep(review, steps);
+    const { queryResult }  = await getOldestReviewByTheme(
       userId,
       currentOrganisationId,
       theme._id
@@ -123,11 +123,11 @@ const checkUserAnswer = async (
         success: false,
         dayNextPresentation: reviewed.step.day,
       },
-      newReview,
+      queryResult,
     };
   } else {
     const reviewed = await previousStep(review, steps);
-    const newReview = await getOldestReviewByTheme(
+    const { queryResult } = await getOldestReviewByTheme(
       userId,
       currentOrganisationId,
       theme._id
@@ -141,7 +141,7 @@ const checkUserAnswer = async (
         },
         dayNextPresentation: reviewed.step.day,
       },
-      newReview,
+      queryResult,
     };
   }
 };
