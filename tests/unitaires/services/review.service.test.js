@@ -2,17 +2,13 @@ const setup = require('../../config/setup.config');
 const reviewService = require('../../../src/services/review.service');
 const { Review } = require('../../../src/models');
 const { ERROR_MESSAGE } = require('../../../src/utils/constants');
-const moment = require('moment-timezone');
+const dayjs = require('dayjs');
 const mongoose = require('mongoose');
+const utc = require('dayjs/plugin/utc');
+dayjs.extend(utc);
 
-// jest.mock('../../../src/models/review.model.js', () => ({
-//   // Mock des méthode du models
-//   find: jest.fn(),
-//   findById: jest.fn(),
-// }));
 
 describe('review service - create review', () => {
-  let token;
   //#region SETUP TEST
   beforeAll(async () => {
     await setup.startMongoMemory();
@@ -20,7 +16,7 @@ describe('review service - create review', () => {
   });
 
   beforeEach(async () => {
-    token = await setup.setToken();
+    await setup.setToken();
   });
 
 
@@ -42,7 +38,7 @@ describe('review service - create review', () => {
 
   test('throw error if fist Presentation date is smaller than today', async () => {
     //arrange
-    const twoDaysAgo = moment().subtract(2, 'days').format('DD/MM/YYYY');
+    const twoDaysAgo = dayjs().utc().subtract(2, 'days').format('YYYY-MM-DD');
     const spy = jest.spyOn(Review, 'create');
     //act
     const methodResult = async () =>
@@ -63,11 +59,7 @@ describe('review service - create review', () => {
 
   test('should be success record review with tomorrow at midnight', async () => {
     //arrange
-    const today = moment().startOf('day');
-    const expectedDate = today
-      .clone()
-      .add(1, 'days')
-      .set({ hour: 0, minute: 0, second: 0 });
+    const expectedDate = dayjs().utc().add(1, 'day').format('DD/MM/YYYY') + ' 00:00:00';
     const spy = jest.spyOn(Review, 'create');
 
     //act
@@ -85,16 +77,14 @@ describe('review service - create review', () => {
     await expect(new mongoose.Types.ObjectId(setup.fakeData.cardId)).toEqual(review.card);
     await expect(new mongoose.Types.ObjectId(setup.fakeData.themeId)).toEqual(review.theme);
     await expect(new mongoose.Types.ObjectId(setup.fakeData.stepId)).toEqual(review.step);
-    await expect(expectedDate.format("DD/MM/YYYY hh:mm:ss")).toEqual(moment(review.nextPresentation).format("DD/MM/YYYY hh:mm:ss"));
+    await expect(expectedDate).toEqual(dayjs.utc(review.nextPresentation).format('DD/MM/YYYY HH:mm:ss'));
   });
 
   test('should be success record review with date presentation at after tomorrow at midnight', async () => {
     //arrange
-    const expectedDate = moment()
-      .startOf('day')
-      .add(2, 'day')
-      .set({ hour: 0, minute: 0, second: 0 })
-    const formatDate = expectedDate.format('DD/MM/YYYY');
+    const now = dayjs().utc().add(1, 'day');
+    const formatDate = now.format('YYYY-MM-DD');
+    const expectedDate = now.format('DD/MM/YYYY') + ' 00:00:00';
     const spy = jest.spyOn(Review, 'create');
 
     //act
@@ -113,6 +103,6 @@ describe('review service - create review', () => {
     await expect(new mongoose.Types.ObjectId(setup.fakeData.cardId)).toEqual(review.card);
     await expect(new mongoose.Types.ObjectId(setup.fakeData.themeId)).toEqual(review.theme);
     await expect(new mongoose.Types.ObjectId(setup.fakeData.stepId)).toEqual(review.step);
-    await expect(expectedDate.format("DD/MM/YYYY hh:mm:ss")).toEqual(moment(review.nextPresentation).format("DD/MM/YYYY hh:mm:ss"));
+    await expect(expectedDate).toEqual(dayjs.utc(review.nextPresentation).format('DD/MM/YYYY HH:mm:ss'));
   });
 });

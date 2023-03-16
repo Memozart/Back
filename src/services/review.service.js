@@ -1,8 +1,11 @@
 const { Review, Step } = require('../models');
-const moment = require('moment-timezone');
+const dayjs = require('dayjs');
 const mongoose = require('mongoose');
 const { isEmpty } = require('../utils/tool');
 const { ERROR_MESSAGE } = require('../utils/constants');
+const utc = require('dayjs/plugin/utc');
+dayjs.extend(utc);
+
 /**
  * Methode qui créer une révision (dans la collection "review")
  * dès qu'une carte est créer
@@ -26,24 +29,20 @@ const createReview = (
     isEmpty(themeId)
   )
     throw new Error(ERROR_MESSAGE.PARAMETER_EMPTY);
-
   if (
     dateNextPresentation &&
-    moment(dateNextPresentation, 'DD/MM/YYYY').isBefore(moment())
+    dayjs.utc(dateNextPresentation, 'YYYY-MM-DD').isBefore(dayjs().utc())
   )
     throw new Error('The first presentation date cannot be before today!');
 
   if (!dateNextPresentation)
-    dateNextPresentation = moment
-      .tz('Europe/Paris')
-      .startOf('day')
+    dateNextPresentation = dayjs()
+      .utc()
       .add(1, 'day')
-      .add(1,'hour');
-  else
-    dateNextPresentation = moment
-      .tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris')
-      .startOf('day')
-      .add(1,'hour');
+      .startOf('day');
+  else{
+    dateNextPresentation = dayjs.utc(dateNextPresentation, 'YYYY-MM-DD').startOf('day');
+  }
 
   return Review.create({
     card: new mongoose.Types.ObjectId(cardId),
@@ -62,7 +61,7 @@ const getOldestReviewByTheme = async (
   page = 1
 ) => {
   const pageSize = 1;
-  const dateMaxReview = moment().startOf('day').add(1, 'day');
+  const dateMaxReview = dayjs().utc().add(1, 'day').startOf('day');
   const query = {
     user: userId,
     organisation: organisationId,
@@ -173,21 +172,18 @@ const nextStep = async (review, steps) => {
   if (order == 10) {
     const step = steps.find((step) => step.order === order);
     const { day, _id } = step;
-    const dateNextPresentation = moment
-      .tz('Europe/Paris')
-      .startOf('day')
+    const dateNextPresentation = dayjs().utc()
       .add(day, 'day')
-      .add(1, 'hours');
+      .startOf('day');
+
     review.step = _id;
     review.nextPresentation = dateNextPresentation;
   } else {
     const step = steps.find((step) => step.order === order + 1);
     const { day, _id } = step;
-    const dateNextPresentation = moment
-      .tz('Europe/Paris')
-      .startOf('day')
+    const dateNextPresentation = dayjs().utc()
       .add(day, 'day')
-      .add(1, 'hours');
+      .startOf('day');
     review.step = _id;
     review.nextPresentation = dateNextPresentation;
   }
@@ -205,20 +201,16 @@ const previousStep = async (review, steps) => {
 
   const { order } = review.step;
   if (order == 1) {
-    const dateNextPresentation = moment
-      .tz('Europe/Paris')
-      .startOf('day')
-      .add(1, 'day')
-      .add(1, 'hours');
+    const dateNextPresentation = dayjs().utc()
+      .add(1, 'day')    
+      .startOf('day');
     review.nextPresentation = dateNextPresentation;
   } else {
     const step = steps.find((step) => step.order === order - 1);
     const { day, _id } = step;
-    const dateNextPresentation = moment
-      .tz('Europe/Paris')
-      .startOf('day')
+    const dateNextPresentation = dayjs().utc()
       .add(day, 'day')
-      .add(1, 'hours');
+      .startOf('day');
     review.step = _id;
     review.nextPresentation = dateNextPresentation;
   }

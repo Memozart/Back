@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const ObjectId = require('mongoose').Types.ObjectId;
 
+let mongo;
 const fakeData = {
   userId: '6111a1111a1a11111a11a1aa',
   themeId: '6222a1111a1a11111a11a1aa',
@@ -15,7 +16,7 @@ const fakeData = {
 /**
  * Démarrer l'instance MongoDB en mémoire avant les tests
  */
-startMongoMemory = async () => {
+const startMongoMemory = async () => {
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
   await mongoose.connect(uri);
@@ -30,19 +31,19 @@ startMongoMemory = async () => {
   });
 };
 
-setToken = async () => {
+const setToken = async () => {
   return jwt.sign({ id: fakeData.userId }, config.jwt.secret, {
     expiresIn: '10s',
   });
 };
 
-clearDatabase = async () => {
+const clearDatabase = async () => {
   await User.deleteMany();
   await mongoose.disconnect();
   await mongo.stop();
 };
 
-initialiseDataset= async () => {
+const initialiseDataset= async () => {
   Theme.create({ _id: fakeData.themeId, name: 'test' });
   Step.create({
     _id: fakeData.stepId,
@@ -61,13 +62,13 @@ initialiseDataset= async () => {
   Organisation.create({
     _id : fakeData.organisationId,
     accountTypeId : 1,
-    accountTypeName : "test",
+    accountTypeName : 'test',
     admin : [new mongoose.Types.ObjectId(fakeData.userId)],
     users :[],
     name :'test',
     accountUserLimit : 1,
     cards : [new mongoose.Types.ObjectId(fakeData.cardId)]
-  })
+  });
 };
 
 module.exports = {

@@ -4,7 +4,7 @@ const request = require('supertest');
 const app = require('../../src/app');
 const setup = require('../config/setup.config');
 
-let mongo;
+
 const themeId1 = '6001c3324b3a98890c17c0ac';
 const themeId2 = '6002c3324b3a98890c17c0ac';
 
