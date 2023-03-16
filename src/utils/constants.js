@@ -6,6 +6,11 @@ const TYPE_ACCOUNT = {
   Gold : { id: 4 , name : 'gold',  limit_user : 1000 , limit_card : 10000 },
 };
 
+const ERROR_MESSAGE = {
+  PARAMETER_EMPTY : 'The parameter cannot be empty'
+};
+
 module.exports = {
-  TYPE_ACCOUNT
+  TYPE_ACCOUNT,
+  ERROR_MESSAGE
 }; 

@@ -1,8 +1,8 @@
-const Review = require('../models/review.model');
-const Step = require('../models/step.model');
+const { Review, Step } = require('../models');
 const moment = require('moment-timezone');
 const mongoose = require('mongoose');
-
+const { isEmpty } = require('../utils/tool');
+const { ERROR_MESSAGE } = require('../utils/constants');
 /**
  * Methode qui créer une révision (dans la collection "review")
  * dès qu'une carte est créer
@@ -19,17 +19,31 @@ const createReview = (
   themeId,
   dateNextPresentation = null
 ) => {
+  if (
+    isEmpty(userId) ||
+    isEmpty(organisationId) ||
+    isEmpty(cardId) ||
+    isEmpty(themeId)
+  )
+    throw new Error(ERROR_MESSAGE.PARAMETER_EMPTY);
+
+  if (
+    dateNextPresentation &&
+    moment(dateNextPresentation, 'DD/MM/YYYY').isBefore(moment())
+  )
+    throw new Error('The first presentation date cannot be before today!');
+
   if (!dateNextPresentation)
     dateNextPresentation = moment
       .tz('Europe/Paris')
       .startOf('day')
       .add(1, 'day')
-      .add(1, 'hours');
+      .add(1,'hour');
   else
     dateNextPresentation = moment
       .tz(dateNextPresentation, 'DD/MM/YYYY', 'Europe/Paris')
       .startOf('day')
-      .add(1, 'hours');
+      .add(1,'hour');
 
   return Review.create({
     card: new mongoose.Types.ObjectId(cardId),
@@ -113,7 +127,7 @@ const checkUserAnswer = async (
   const { card, theme } = review;
   if (card.answer.toLowerCase() == userAnswer.toLowerCase()) {
     const reviewed = await nextStep(review, steps);
-    const { queryResult }  = await getOldestReviewByTheme(
+    const { queryResult } = await getOldestReviewByTheme(
       userId,
       currentOrganisationId,
       theme._id
@@ -136,8 +150,8 @@ const checkUserAnswer = async (
       statusResponse: {
         success: false,
         feedback: {
-          userAnswer : userAnswer,
-          goodAnswer : card.answer
+          userAnswer: userAnswer,
+          goodAnswer: card.answer,
         },
         dayNextPresentation: reviewed.step.day,
       },
