@@ -72,24 +72,32 @@ const getOldestReviewByTheme = async (
   const totalPages = Math.ceil(count / pageSize);
 
   const reviews = await Review.find(query)
-    .populate(['theme', 'step'])
     .sort({ nextPresentation: 1 })
     .skip((page - 1) * pageSize)
     .limit(pageSize)
+    .select(['-nextPresentation', '-user'])
+    .populate({
+      path: 'theme',
+      select: '-_id', // exclut le champs 'réponse'
+    })
+    .populate({
+      path: 'step',
+      select: '-_id', // exclut le champs 'réponse'
+    })
     .populate({
       path: 'card',
-      select: '-answer -theme', // exclut le champs 'réponse'
+      select: '-answer -theme -_id', // exclut le champs 'réponse'
     })
     .populate({
       path: 'organisation',
-      select: 'name', // inclus uniquement le champs 'name'
+      select: 'name -_id', // inclus uniquement le champs 'name'
     })
     .lean();
 
   const hasNext = page < totalPages;
-  const queryResult = reviews && reviews.length == 1 ? reviews[0] : null;
-  if (!queryResult) return null;
-  return { queryResult, hasNext, totalPages, currentPage: page };
+  const review = reviews && reviews.length == 1 ? reviews[0] : null;
+  if (!review) return null;
+  return { review, hasNext, totalPages, currentPage: page };
 };
 
 /**
@@ -105,7 +113,7 @@ const checkUserAnswer = async (
   reviewId,
   userAnswer
 ) => {
-  const review = await Review.findOne({
+  const reviewDB =  await Review.findOne({
     user: userId,
     organisation: currentOrganisationId,
     _id: reviewId,
@@ -123,24 +131,26 @@ const checkUserAnswer = async (
 
   const steps = await Step.find();
 
-  const { card, theme } = review;
+  const { card, theme } = reviewDB;
   if (card.answer.toLowerCase() == userAnswer.toLowerCase()) {
-    const reviewed = await nextStep(review, steps);
-    const { queryResult } = await getOldestReviewByTheme(
+    const reviewed = await nextStep(reviewDB, steps);
+    const review = await getOldestReviewByTheme(
       userId,
       currentOrganisationId,
       theme._id
     );
     return {
       statusResponse: {
-        success: false,
-        dayNextPresentation: reviewed.step.day,
+        success: true,
+        feedback: {
+          dayNextPresentation: reviewed.step.day,
+        },
       },
-      queryResult,
+      review,
     };
   } else {
-    const reviewed = await previousStep(review, steps);
-    const { queryResult } = await getOldestReviewByTheme(
+    const reviewed = await previousStep(reviewDB, steps);
+    const review  = await getOldestReviewByTheme(
       userId,
       currentOrganisationId,
       theme._id
@@ -151,10 +161,10 @@ const checkUserAnswer = async (
         feedback: {
           userAnswer: userAnswer,
           goodAnswer: card.answer,
+          dayNextPresentation: reviewed.step.day,
         },
-        dayNextPresentation: reviewed.step.day,
       },
-      queryResult,
+      review,
     };
   }
 };
@@ -187,7 +197,7 @@ const nextStep = async (review, steps) => {
     review.step = _id;
     review.nextPresentation = dateNextPresentation;
   }
-  return await Review.findByIdAndUpdate(review._id, review, { new: true });
+  return await Review.findByIdAndUpdate(review._id, review, { new: true }).populate(['step']);
 };
 
 // /**
@@ -215,7 +225,7 @@ const previousStep = async (review, steps) => {
     review.nextPresentation = dateNextPresentation;
   }
 
-  return await Review.findByIdAndUpdate(review._id, review, { new: true });
+  return await Review.findByIdAndUpdate(review._id, review, { new: true }).populate(['step']);
 };
 
 module.exports = {
