@@ -1,43 +1,35 @@
 const mongoose = require('mongoose');
 const types = mongoose.Schema.Types;
 
-const userSchema = new mongoose.Schema(
+const cardSchema = new mongoose.Schema(
   {
-    email: {
-      type: types.String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-    },
-    password: {
+    question: {
       type: types.String,
       required: true,
       trim: true,
     },
-    firstName: {
+    answer: {
       type: types.String,
       required: true,
       trim: true,
     },
-    lastName: {
+    help: {
       type: types.String,
-      required: true,
       trim: true,
     },
-    currentOrganisation: {
+    theme: {
       type: types.ObjectId,
       required: true,
       trim: true,
-      ref :'Organisation'
+      ref: 'Theme'
     },
   },
   { versionKey: false }
 );
 
-userSchema.pre('save', (next) => {
+cardSchema.pre('save', (next) => {
   next();
 });
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+const card = mongoose.model('Card', cardSchema);
+module.exports = card;

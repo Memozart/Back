@@ -6,7 +6,7 @@ const {
   generateRefreshToken,
   verifyRefreshToken,
   removeRefreshToken,
-} = require('../middlewares/jwt.middleware');
+} = require('../middlewares/user.middleware');
 const jwt = require('jsonwebtoken');
 
 const register = catchAsync(async (req, res, next) => {

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const authController = require('../controllers/auth.controller');
 const authValidation = require('../validations/auth.validation');
 const validate = require('../middlewares/validate');
-const { isConnected } = require('../middlewares/jwt.middleware'); 
+const { isConnected } = require('../middlewares/user.middleware'); 
 
 router.post(
   '/register',
