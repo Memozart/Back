@@ -2,7 +2,7 @@ const router = require('express').Router();
 const authController = require('../controllers/auth.controller');
 const authValidation = require('../validations/auth.validation');
 const validate = require('../middlewares/validate');
-const userMiddleware = require('../middlewares/user.middleware');
+const { isConnected } = require('../middlewares/jwt.middleware'); 
 
 router.post(
   '/register',
@@ -12,8 +12,12 @@ router.post(
 router.post('/login', validate(authValidation.login), authController.login);
 router.post(
   '/disconnect',
-  userMiddleware.isConnected,
+  isConnected,
   authController.disconnect
+);
+router.post(
+  '/refresh-token',
+  authController.refreshToken
 );
 
 module.exports = router;
