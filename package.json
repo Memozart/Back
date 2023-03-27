@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@joi/date": "^2.1.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -21,6 +22,7 @@
     "http-status": "^1.6.2",
     "joi": "^17.7.1",
     "jsonwebtoken": "^9.0.0",
+    "moment-timezone": "^0.5.41",
     "mongodb-memory-server": "^8.11.5",
     "mongoose": "^6.9.1",
     "morgan": "^1.10.0",

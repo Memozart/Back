@@ -6,7 +6,7 @@ const config = require('../../../src/config');
 const { User } = require('../../../src/models');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-
+const ObjectId = require('mongoose').Types.ObjectId;
 
 jest.mock('../../../src/services/theme.service', () => ({
   get: jest.fn(),
@@ -32,7 +32,7 @@ describe('theme controller - get', () => {
       .mockReturnValue({ _id: '1', name: 'Test theme' });
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test' });
+    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test', currentOrganisation : new ObjectId('6111a1111a1a11111a11a1aa') });
   });
 
   // Ajouter un élément à chaque test
@@ -88,7 +88,7 @@ describe('theme controller - get all', () => {
     ]);
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test' });
+    await User.create({ _id: userObjectId, email: 'test@test.fr', password: 'test', firstName: 'test', lastName: 'test', currentOrganisation : new ObjectId('6111a1111a1a11111a11a1aa') });
   });
 
   // Ajouter un élément à chaque test
