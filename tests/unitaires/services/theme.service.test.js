@@ -2,9 +2,8 @@ const themeService = require('../../../src/services/theme.service');
 const { Theme } = require('../../../src/models');
 
 jest.mock('../../../src/models/theme.model', () => ({
-  // Mock de la méthode find
+  // Mock des méthode du models
   find: jest.fn(),
-  // Mock de la méthode create
   findById: jest.fn(),
 }));
 
