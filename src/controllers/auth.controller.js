@@ -29,13 +29,13 @@ const disconnect = catchAsync(async (req, res) => {
 });
 
 const refreshToken = catchAsync(async (req, res, next) => {
-  const { refreshToken } = req.body;
+  const { refresh_token } = req.body;
 
-  if (!refreshToken) {
+  if (!refresh_token) {
     return errorF('Refresh token not found', '', 403, res, next);
   }
-  const verify = await verifyRefreshToken(refreshToken);
-  const user = jwt.decode(refreshToken).user;
+  const verify = await verifyRefreshToken(refresh_token);
+  const user = jwt.decode(refresh_token).user;
   if (!verify) {
     return errorF('Not authorized', '', 401, res, next);
   }
