@@ -1,4 +1,4 @@
-const { Card } = require('../models');
+const { Card, Review } = require('../models');
 const reviewService = require('./review.service');
 const organisationService = require('./organisation.service');
 
@@ -60,7 +60,8 @@ const update = (id, card) => {
 
 const remove = (id) => {
   try {
-    return Card.findByIdAndDelete(id);
+    Card.findByIdAndDelete(id);
+    return Review.deleteMany({ card: id });
   } catch (error) {
     return error;
   }
