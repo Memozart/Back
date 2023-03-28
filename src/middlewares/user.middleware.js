@@ -33,7 +33,7 @@ const isConnected = async (req, res, next) => {
   }
   jwt.verify(accessToken, config.jwt.secret, (err, user) => {
     if (err) {
-      return errorF('Not authorized', '', 401, res, next);
+      return errorF('Not authorized', err, 401, res, next);
     }
     req.user = user.user;
     delete req.user.password;
@@ -44,7 +44,7 @@ const isConnected = async (req, res, next) => {
 const insertRefreshToken = async (user, refreshToken) => {
   delete user.password;
   await client.connect();
-  const key = `refreshToken:${user._id}:`;
+  const key = `refreshToken:${user._id}`;
   await client.set(key, refreshToken);
   await client.quit();
 };
@@ -52,6 +52,7 @@ const insertRefreshToken = async (user, refreshToken) => {
 const verifyRefreshToken = async (refreshToken) => {
   const userId = jwt.decode(refreshToken).user._id;
   const key = `refreshToken:${userId}`;
+
   await client.connect();
   const data = await client.get(key);
   await client.quit();
