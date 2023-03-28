@@ -51,7 +51,7 @@ const get = (id) => {
 };
 
 const getAll = () => {
-  return Card.find();
+  return Card.find().populate('theme');
 };
 
 const update = (id, card) => {
