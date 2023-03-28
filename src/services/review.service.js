@@ -66,7 +66,7 @@ const getOldestReviewByTheme = async (
     user: userId,
     organisation: organisationId,
     theme: themeId,
-    nextPresentation: { $lte: dateMaxReview },
+    nextPresentation: { $lt: dateMaxReview },
   };
   const count = await Review.countDocuments(query);
   const totalPages = Math.ceil(count / pageSize);
