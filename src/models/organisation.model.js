@@ -60,6 +60,9 @@ organisationSchema.pre('save', (next) => {
 
 organisationSchema.pre('findOneAndUpdate', async function (next) {
   const filter = this.getFilter();
+  const options = this.getOptions();
+  if(options.runValidators == false)
+    next();
 
   // récupérer l'id de l'organisation dans le filtre de la requête
   const orgaId = filter['_id'];

@@ -2,9 +2,10 @@ const organisationService = require('../services/organisation.service');
 const catchAsync = require('../utils/catchAsync');
 const { successF } = require('../utils/message');
 const { TYPE_ACCOUNT } = require('../utils/constants');
+const tool = require('../utils/tool');
 
 const create = catchAsync(async (req, res, next) => {
-  const { id: userId } = req.user;
+  const { userId } = tool.getUserIdAndOrganisationId(req);
   const { name, type: idTypeAccount } = req.body;
   const typeAccount = Object.values(TYPE_ACCOUNT).find(
     (e) => e.id === idTypeAccount
@@ -24,7 +25,7 @@ const create = catchAsync(async (req, res, next) => {
 });
 
 const getById = catchAsync(async (req, res, next) => {
-  const { id: userId } = req.user;
+  const { userId } = tool.getUserIdAndOrganisationId(req);
   const organisationId = req.params.id;
   const organisation = await organisationService.getOrganisationById(
     userId,
@@ -34,7 +35,7 @@ const getById = catchAsync(async (req, res, next) => {
 });
 
 const getAll = catchAsync(async (req, res, next) => {
-  const { id: userId } = req.user;
+  const { userId } = tool.getUserIdAndOrganisationId(req);
   const organisations = await organisationService.getAllOrganisationsByUserId(
     userId
   );
@@ -45,7 +46,7 @@ const getAll = catchAsync(async (req, res, next) => {
  * methode qui permet à l'utilisateur courant de quitter l'organisation
  */
 const leave = catchAsync(async (req, res, next) => {
-  const { id: userId } = req.user;
+  const { userId } = tool.getUserIdAndOrganisationId(req);
   const organisationId = req.params.id;
   const { userIdDeleted } = req.body;
   const organisation = await organisationService.userLeaveInOrganisation(
@@ -57,7 +58,7 @@ const leave = catchAsync(async (req, res, next) => {
 });
 
 const join = catchAsync(async (req, res, next) => {
-  const { id: userId } = req.user;
+  const { userId } = tool.getUserIdAndOrganisationId(req);
   const organisationId = req.params.id;
   const { userIdAdded } = req.body;
   const organisation = await organisationService.addUserInOrganisation(

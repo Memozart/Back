@@ -39,7 +39,7 @@ const createProfessionalOrganisation = async (
     throw new error('Le paramètre ne peut pas être un compte personnel');
   }
 
-  Organisation.create({
+  await Organisation.create({
     name: organisationName,
     accountUserLimit: organisationType.limit_user,
     accountTypeName: organisationType.name,
@@ -100,7 +100,7 @@ const getAllOrganisationsByUserId = async (userId) => {
  * @returns l'organisation avec la nouvelle personne ajouté (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
  */
 const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
-  return Organisation.findOneAndUpdate(
+  const data =  await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $push: { users: userIdAdded } },
     {
@@ -108,6 +108,7 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
       runValidators: true, // run pre query on schema
     }
   );
+  return data;
 };
 
 /**
@@ -120,7 +121,7 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
  * @returns l'organisation sans la personne (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
  */
 const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) => {
-  return Organisation.findOneAndUpdate(
+  return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { users: userIdDeleted } },
     {
@@ -130,24 +131,24 @@ const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) =>
   );
 };
 
-const addCardToOrganisation = async(userId, organisationId, cardId)=>{
-  return Organisation.findOneAndUpdate(
+const addCardToOrganisation = async(userId, organisationId, cardId, runPreValidator = true)=>{
+  return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $push: { cards: cardId } },
     {
       new: true, // return the updated document instead of the original
-      runValidators: true, // run pre query on schema
+      runValidators: runPreValidator, 
     }
   );
 };
 
-const removeCardToOrganisation = async(userId, organisationId, cardId)=>{
-  return Organisation.findOneAndUpdate(
+const removeCardToOrganisation = async(userId, organisationId, cardId, runPreValidator = true)=>{
+  return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { card: cardId } },
     {
       new: true, // return the updated document instead of the original
-      runValidators: true, // run pre query on schema
+      runValidators: runPreValidator, 
     }
   );
 };
