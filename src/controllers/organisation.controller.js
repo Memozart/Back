@@ -69,10 +69,22 @@ const join = catchAsync(async (req, res, next) => {
   successF('the user was join the organisation', organisation, 200, res, next);
 });
 
+/**
+ * Récupérer toutes les cartes de l'organisation
+ */
+const getAllCards = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { userId } = tool.getUserIdAndOrganisationId(req);
+  const cards = await organisationService.getAllUserCard(userId, id);
+  successF('cards fetch', cards, 200, res, next);
+});
+
+
 module.exports = {
   create,
   getById,
   getAll,
   leave,
   join,
+  getAllCards
 };
