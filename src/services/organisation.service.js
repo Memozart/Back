@@ -50,8 +50,8 @@ const createProfessionalOrganisation = async (
 };
 
 /**
- * 
- * Récupérer les informations non confidentielle de l'organisation (peut importe son type) par son id 
+ *
+ * Récupérer les informations non confidentielle de l'organisation (peut importe son type) par son id
  * @param {*} userId l'utilisateur qui réalise la demande
  * @param {*} organisationId l'organisation qui doit être récupérer
  * @returns l'organisation si l'utilisateur est PRÉSENT sinon rien
@@ -64,19 +64,18 @@ const getOrganisationById = async (userId, organisationId) => {
 };
 
 /**
- * Récupérer les informations de l'organisation (peut importe son type) par son id 
+ * Récupérer les informations de l'organisation (peut importe son type) par son id
  * @param {*} userId l'utilisateur qui réalise la demande
- * @param {*} organisationId l'organisation qui doit être récupérer 
+ * @param {*} organisationId l'organisation qui doit être récupérer
  * @returns l'organisation si l'utilisateur est ADMINISTRATEUR sinon rien
  */
-const getOrganisationIfAdmin = async (userId, organisationId)=> {
+const getOrganisationIfAdmin = async (userId, organisationId) => {
   const organisation = await Organisation.findOne({
     _id: organisationId,
     admin: userId,
   });
   return organisation;
 };
-
 
 /**
  * Récupérer toutes les organisations dans laquel l'utilisateur est présent
@@ -92,15 +91,15 @@ const getAllOrganisationsByUserId = async (userId) => {
 
 /**
  * Ajoute un utilisateur dans l'organisation
- * 
+ *
  * ⚠ passe par un pre 'findOneAndUpdate' dans le model organisation avant la requete
  * @param {*} userId l'utilisateur qui réalise la demande
- * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter 
+ * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter
  * @param {*} userIdAdded  l'utilisateur à ajouter
  * @returns l'organisation avec la nouvelle personne ajouté (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
  */
 const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
-  const data =  await Organisation.findOneAndUpdate(
+  const data = await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $push: { users: userIdAdded } },
     {
@@ -113,14 +112,18 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
 
 /**
  * supprime un utilisateur de l'organisation
- * 
+ *
  * ⚠ passe par un pre 'findOneAndUpdate' dans le model organisation avant la requete
  * @param {*} userId l'utilisateur qui réalise la demande
- * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter 
+ * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter
  * @param {*} userIdAdded  l'utilisateur à supprimer
  * @returns l'organisation sans la personne (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
  */
-const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) => {
+const userLeaveInOrganisation = async (
+  userId,
+  organisationId,
+  userIdDeleted
+) => {
   return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { users: userIdDeleted } },
@@ -131,27 +134,53 @@ const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) =>
   );
 };
 
-const addCardToOrganisation = async(userId, organisationId, cardId, runPreValidator = true)=>{
+const addCardToOrganisation = async (
+  userId,
+  organisationId,
+  cardId,
+  runPreValidator = true
+) => {
   return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $push: { cards: cardId } },
     {
       new: true, // return the updated document instead of the original
-      runValidators: runPreValidator, 
+      runValidators: runPreValidator,
     }
   );
 };
 
-const removeCardToOrganisation = async(userId, organisationId, cardId, runPreValidator = true)=>{
+const removeCardToOrganisation = async (
+  userId,
+  organisationId,
+  cardId,
+  runPreValidator = true
+) => {
   return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { card: cardId } },
     {
       new: true, // return the updated document instead of the original
-      runValidators: runPreValidator, 
+      runValidators: runPreValidator,
     }
   );
 };
+
+/**
+ * Récupérer toutes les cartes d'un utilisateur dans une organisation
+ * @param {number} userId 
+ * @param {number} organisationId 
+ * @returns 
+ */
+const getAllUserCard = async (userId, organisationId) => {
+  return await Organisation.findOne({
+    _id: organisationId,
+    $or: [{ users: userId }, { admin: userId }],
+  })
+    .populate('cards')
+    .select('cards name _id');
+};
+
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,
@@ -161,5 +190,6 @@ module.exports = {
   userLeaveInOrganisation,
   getOrganisationIfAdmin,
   addCardToOrganisation,
-  removeCardToOrganisation
+  removeCardToOrganisation,
+  getAllUserCard,
 };
