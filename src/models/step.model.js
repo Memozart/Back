@@ -10,7 +10,7 @@ const stepSchema = new mongoose.Schema(
       unique: true,
     },
     step: {
-      type: types.String,
+      type: types.Number,
       required: true,
       trim: true,
       unique: true,

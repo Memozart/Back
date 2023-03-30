@@ -43,14 +43,23 @@ const clearDatabase = async () => {
   await mongo.stop();
 };
 
-const initialiseDataset= async () => {
-  Theme.create({ _id: fakeData.themeId, name: 'test' });
+const initialiseDataset = async () => {
+  Theme.create({
+    _id: fakeData.themeId,
+    name: 'test',
+    color1: 'test',
+    color2: 'test',
+    darkColor: 'test',
+    darkShadow: 'test',
+    icon: 'test',
+    lightShadow: 'test'
+  });
   Step.create({
     _id: fakeData.stepId,
     day: '1',
     info: 'test',
     order: 1,
-    step: 'test',
+    step: 1,
   });
   Card.create({
     _id: fakeData.cardId,
@@ -60,14 +69,14 @@ const initialiseDataset= async () => {
     theme: new mongoose.Types.ObjectId(fakeData.themeId),
   });
   Organisation.create({
-    _id : fakeData.organisationId,
-    accountTypeId : 1,
-    accountTypeName : 'test',
-    admin : [new mongoose.Types.ObjectId(fakeData.userId)],
-    users :[],
-    name :'test',
-    accountUserLimit : 1,
-    cards : [new mongoose.Types.ObjectId(fakeData.cardId)]
+    _id: fakeData.organisationId,
+    accountTypeId: 1,
+    accountTypeName: 'test',
+    admin: [new mongoose.Types.ObjectId(fakeData.userId)],
+    users: [],
+    name: 'test',
+    accountUserLimit: 1,
+    cards: [new mongoose.Types.ObjectId(fakeData.cardId)],
   });
 };
 
@@ -76,5 +85,5 @@ module.exports = {
   setToken,
   clearDatabase,
   fakeData,
-  initialiseDataset
+  initialiseDataset,
 };
