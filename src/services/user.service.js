@@ -16,7 +16,11 @@ const create = async (userBody) => {
 };
 
 const login = async (userBody) => {
-  const user = await User.findOne({ email: userBody.email });
+  const user = await User.findOne({ email: userBody.email })
+    .populate({
+      path: 'currentOrganisation',
+      select: 'name _id', // inclus uniquement le champs 'name'
+    });
   if (!user) {
     throw new Error('User not found');
   }

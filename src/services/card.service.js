@@ -26,7 +26,8 @@ const create = async (cardBody, userId, organisationId) => {
   await organisationService.addCardToOrganisation(
     userId,
     organisationId,
-    card.id
+    card.id,
+    false
   );
 
   // ajout pour chaque utilisateur de l'organisation une review

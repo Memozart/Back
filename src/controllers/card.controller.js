@@ -1,11 +1,10 @@
 const cardService = require('../services/card.service');
 const catchAsync = require('../utils/catchAsync');
 const { successF } = require('../utils/message');
-
+const tool = require('../utils/tool');
 const create = catchAsync(async (req, res, next) => {
-  const { id: userId, currentOrganisation } = req.user;
-  const idCurrentOrganisation = currentOrganisation.toString();
-  const card = await cardService.create(req.body, userId, idCurrentOrganisation);
+  const { userId, currentOrganisationId } = tool.getUserIdAndOrganisationId(req);
+  const card = await cardService.create(req.body, userId, currentOrganisationId);
   successF('Card created', card, 201, res, next);
 });
 

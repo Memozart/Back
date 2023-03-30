@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const types = mongoose.Schema.Types;
-
+const types = mongoose.Schema.Types;    
 const reviewSchema = new mongoose.Schema(
   {
     user: {
@@ -45,6 +44,5 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.pre('save', (next) => {
   next();
 });
-
 const review = mongoose.model('Review', reviewSchema);
 module.exports = review;
