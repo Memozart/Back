@@ -37,8 +37,16 @@ const getById = async (id) => {
   return User.findById(id);
 };
 
+const changeCurrentOrganisation = async (userId, organisationId) => {
+  return User.findOneAndUpdate(
+    { _id: userId },
+    { currentOrganisation: organisationId }
+  );
+};
+
 module.exports = {
   create,
   login,
   getById,
+  changeCurrentOrganisation,
 };
