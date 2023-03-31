@@ -228,10 +228,18 @@ const previousStep = async (review, steps) => {
   return await Review.findByIdAndUpdate(review._id, review, { new: true }).populate(['step']);
 };
 
+const updateThemeByIdCardAndIdOrganisation= async (cardId, organisationId, themeId) =>{
+  return await Review.updateMany({
+    card : cardId,
+    organisation : organisationId
+  },{ $set: { theme: themeId } });
+};
+
 module.exports = {
   checkUserAnswer,
   nextStep,
   previousStep,
   createReview,
   getOldestReviewByTheme,
+  updateThemeByIdCardAndIdOrganisation
 };

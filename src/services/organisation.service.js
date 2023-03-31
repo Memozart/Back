@@ -181,6 +181,24 @@ const getAllUserCard = async (userId, organisationId) => {
     .select('cards name _id');
 };
 
+/**
+ * vérifie que l'utilisateur à bien les droit de modification sur la carte
+ * en vérifiant si l'utilisateur est adminisatrateur et si la carte existe.
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @paraym {*} organisationId l'organisation qui doit être récupérer
+ * @paraym {*} cardId lde la carte à modifier
+ * @returns true si a les droits sinon false
+ */
+const hasRoleToManageCard = async (userId, organisationId, cardId) => {
+  const organisation = await Organisation.findOne({
+    _id: organisationId,
+    admin: userId,
+    cards : cardId
+  });
+  return organisation ? true: false;
+};
+
+
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,
@@ -192,4 +210,5 @@ module.exports = {
   addCardToOrganisation,
   removeCardToOrganisation,
   getAllUserCard,
+  hasRoleToManageCard
 };
