@@ -5,6 +5,7 @@ const cardRoutes = require('./card.route');
 const organisationRoutes = require('./organisation.route');
 const reviewRoutes = require('./review.route');
 const stepRoutes = require('./step.route');
+const statRoutes = require('./stat.route');
 
 const defaultRoutes = [
   {
@@ -30,6 +31,10 @@ const defaultRoutes = [
   {
     path: '/steps',
     route: stepRoutes,
+  },
+  {
+    path: '/stats',
+    route: statRoutes,
   }
 ];
 
