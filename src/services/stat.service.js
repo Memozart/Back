@@ -46,6 +46,7 @@ const getReviewsOfAllThemes = async (userId, organisationId) => {
         darkColor: 1,
         darkShadow: 1,
         lightShadow: 1,
+        icon: 1,
         reviews: {
           $filter: {
             input: '$reviews',
@@ -71,6 +72,7 @@ const getReviewsOfAllThemes = async (userId, organisationId) => {
         darkColor: 1,
         darkShadow: 1,
         lightShadow: 1,
+        icon: 1,
         nbReviews: { $size: '$reviews' },
       },
     },
