@@ -27,7 +27,7 @@ const getReviewsDone = async (userId, organisationId) => {
 const getReviewsOfAllThemes = async (userId, organisationId) => {
   const dateMaxReview = new Date();
   dateMaxReview.setUTCHours(0, 0, 0, 0);
-  dateMaxReview.setHours(dateMaxReview.getHours() + 2);
+  dateMaxReview.setDate(dateMaxReview.getDate() + 1);
   return await Theme.aggregate([
     {
       $lookup: {
