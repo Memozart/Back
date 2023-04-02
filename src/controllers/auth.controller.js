@@ -16,10 +16,16 @@ const register = catchAsync(async (req, res, next) => {
 
 const login = catchAsync(async (req, res, next) => {
   const user = await userService.login(req.body);
-  const currentOrganisation = user.currentOrganisation;
+  delete user.password;
   const accessToken = generateAccessToken({ user });
   const refreshToken = await generateRefreshToken({ user });
-  successF('User logged in', { accessToken, refreshToken,currentOrganisation }, 200, res, next);
+  successF(
+    'User logged in',
+    { accessToken, refreshToken, user },
+    200,
+    res,
+    next
+  );
 });
 
 const disconnect = catchAsync(async (req, res) => {
