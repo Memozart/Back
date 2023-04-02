@@ -47,22 +47,32 @@ const create = async (cardBody, userId, organisationId) => {
   return card;
 };
 
-const get = (id) => {
+const get = async (id) => {
   return Card.findById(id);
 };
 
-const getAll = () => {
+const getAll = async () => {
   return Card.find().populate('theme');
 };
-
-const update = (id, card) => {
-  return Card.findByIdAndUpdate(id, card, { new: true });
+/**
+ * Mets à jour la carte grâce à son id et toutes les reviews
+ * associés pour prévenir le changement de thème
+ * @param {*} cardId identifiant de la carte
+ * @param {*} card les données de la carte
+ * @returns la carte modifiée
+ */
+const update = async (cardId, card, organisationId) => {
+  const updatedCard = await Card.findByIdAndUpdate(cardId, card, {
+    new: true,
+  }).populate('theme');
+  await reviewService.updateThemeByIdCardAndIdOrganisation(cardId,organisationId, card.theme);
+  return updatedCard;
 };
 
-const remove = (id) => {
+const remove = async (id) => {
   try {
-    Card.findByIdAndDelete(id);
-    return Review.deleteMany({ card: id });
+    await Card.findByIdAndDelete(id);
+    return await Review.deleteMany({ card: id });
   } catch (error) {
     return error;
   }
