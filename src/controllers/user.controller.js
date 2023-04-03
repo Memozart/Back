@@ -7,6 +7,7 @@ const {
 } = require('../middlewares/user.middleware');
 const tool = require('../utils/tool');
 
+
 const changeCurrentOrganisation = catchAsync(async (req, res, next) => {
   const { organisationId } = req.body;
   const { userId } = tool.getUserIdAndOrganisationId(req);
@@ -14,12 +15,13 @@ const changeCurrentOrganisation = catchAsync(async (req, res, next) => {
     userId,
     organisationId
   );
+  delete user.password;
   const accessToken = generateAccessToken({ user });
   const refreshToken = await generateRefreshToken({ user });
   const toReturn = {
     refreshToken,
     accessToken,
-    currentOrganisation: user.currentOrganisation,
+    user
   };
   successF('Current organisation changed', toReturn, 200, res, next);
 });
