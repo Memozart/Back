@@ -46,8 +46,8 @@ const changeCurrentOrganisation = async (userId, organisationId) => {
     {new: true, useFindAndModify: false}
   ).populate({
     path: 'currentOrganisation',
-    select: 'name _id', // includes only the 'name' field
-  });
+    select: 'name _id', // inclus uniquement le champs 'name'
+  }).select('-password');
 };
 
 module.exports = {
