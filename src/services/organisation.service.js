@@ -168,17 +168,20 @@ const removeCardToOrganisation = async (
 
 /**
  * Récupérer toutes les cartes d'un utilisateur dans une organisation
- * @param {number} userId 
- * @param {number} organisationId 
- * @returns 
+ * @param {number} userId
+ * @param {number} organisationId
+ * @returns
  */
 const getAllUserCard = async (userId, organisationId) => {
   return await Organisation.findOne({
     _id: organisationId,
     $or: [{ users: userId }, { admin: userId }],
-  })
-    .populate('cards')
-    .select('cards name _id');
+  }).populate({
+    path: 'cards',
+    populate: {
+      path: 'theme',
+    },
+  });
 };
 
 /**
@@ -193,11 +196,10 @@ const hasRoleToManageCard = async (userId, organisationId, cardId) => {
   const organisation = await Organisation.findOne({
     _id: organisationId,
     admin: userId,
-    cards : cardId
+    cards: cardId,
   });
-  return organisation ? true: false;
+  return organisation ? true : false;
 };
-
 
 module.exports = {
   createPersonnalOrganisation,
@@ -210,5 +212,5 @@ module.exports = {
   addCardToOrganisation,
   removeCardToOrganisation,
   getAllUserCard,
-  hasRoleToManageCard
+  hasRoleToManageCard,
 };

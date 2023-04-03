@@ -29,11 +29,15 @@ const createReview = (
     isEmpty(themeId)
   )
     throw new Error(ERROR_MESSAGE.PARAMETER_EMPTY);
+  
+  const today = dayjs().utc().startOf('day');
+  const dateCard = dateNextPresentation ? dayjs(dateNextPresentation,'YYYY-MM-DD').utc(true) : today;
   if (
-    dateNextPresentation &&
-    dayjs.utc(dateNextPresentation, 'YYYY-MM-DD').isBefore(dayjs().utc())
-  )
+    dateCard.isBefore(today)
+  ) {
     throw new Error('The first presentation date cannot be before today!');
+  }
+
 
   if (!dateNextPresentation)
     dateNextPresentation = dayjs()
