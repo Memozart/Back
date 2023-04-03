@@ -16,10 +16,16 @@ const register = catchAsync(async (req, res, next) => {
 
 const login = catchAsync(async (req, res, next) => {
   const user = await userService.login(req.body);
-
+  delete user.password;
   const accessToken = generateAccessToken({ user });
   const refreshToken = await generateRefreshToken({ user });
-  successF('User logged in', { accessToken, refreshToken }, 200, res, next);
+  successF(
+    'User logged in',
+    { accessToken, refreshToken, user },
+    200,
+    res,
+    next
+  );
 });
 
 const disconnect = catchAsync(async (req, res) => {
@@ -29,13 +35,13 @@ const disconnect = catchAsync(async (req, res) => {
 });
 
 const refreshToken = catchAsync(async (req, res, next) => {
-  const { refreshToken } = req.body;
+  const { refresh_token } = req.body;
 
-  if (!refreshToken) {
+  if (!refresh_token) {
     return errorF('Refresh token not found', '', 403, res, next);
   }
-  const verify = await verifyRefreshToken(refreshToken);
-  const user = jwt.decode(refreshToken).user;
+  const verify = await verifyRefreshToken(refresh_token);
+  const user = jwt.decode(refresh_token).user;
   if (!verify) {
     return errorF('Not authorized', '', 401, res, next);
   }

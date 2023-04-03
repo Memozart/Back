@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const create = async (userBody) => {
   userBody.password = await bcrypt.hash(userBody.password, 10);
-  // on génère l'id de l'organisation pour l'attribuer à l'utilisateur 
+  // on génère l'id de l'organisation pour l'attribuer à l'utilisateur
   // 1/18.4 quintillions de conflits
   userBody.currentOrganisation = new mongoose.Types.ObjectId();
   const user = await User.create(userBody);
@@ -16,11 +16,17 @@ const create = async (userBody) => {
 };
 
 const login = async (userBody) => {
-  const user = await User.findOne({ email: userBody.email });
+  const user = await User.findOne({ email: userBody.email }).populate({
+    path: 'currentOrganisation',
+    select: 'name _id', // inclus uniquement le champs 'name'
+  });
   if (!user) {
     throw new Error('User not found');
   }
-  const isPasswordMatch = await bcrypt.compare(userBody.password, user.password);
+  const isPasswordMatch = await bcrypt.compare(
+    userBody.password,
+    user.password
+  );
   if (!isPasswordMatch) {
     throw new Error('User not found');
   }
@@ -28,13 +34,25 @@ const login = async (userBody) => {
   return user;
 };
 
-
 const getById = async (id) => {
   return User.findById(id);
+};
+
+const changeCurrentOrganisation = async (userId, organisationId) => {
+  // find one and update a user and populate the currentOrganisation but as key 'organisation' and keep the currentOrgasation as key 'currentOrganisation'
+  return User.findOneAndUpdate(
+    {_id: userId},
+    {currentOrganisation: organisationId},
+    {new: true, useFindAndModify: false}
+  ).populate({
+    path: 'currentOrganisation',
+    select: 'name _id', // inclus uniquement le champs 'name'
+  }).select('-password');
 };
 
 module.exports = {
   create,
   login,
   getById,
+  changeCurrentOrganisation,
 };

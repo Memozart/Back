@@ -21,8 +21,8 @@ const isEmpty = (param)=>{
 };
 
 const getUserIdAndOrganisationId = (req) =>{
-  const { id: userId, currentOrganisation } = req.user;
-  const currentOrganisationId = currentOrganisation?.toString();
+  const { _id: userId, currentOrganisation } = req.user;
+  const currentOrganisationId = currentOrganisation._id?.toString();
   return { userId , currentOrganisationId };
 };
 

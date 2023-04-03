@@ -5,6 +5,8 @@ const cardRoutes = require('./card.route');
 const organisationRoutes = require('./organisation.route');
 const reviewRoutes = require('./review.route');
 const stepRoutes = require('./step.route');
+const statRoutes = require('./stat.route');
+const userRoute = require('./user.route');
 
 const defaultRoutes = [
   {
@@ -30,7 +32,15 @@ const defaultRoutes = [
   {
     path: '/steps',
     route: stepRoutes,
-  }
+  },
+  {
+    path: '/stats',
+    route: statRoutes,
+  },
+  {
+    path: '/users',
+    route: userRoute,
+  },
 ];
 
 defaultRoutes.forEach((route) => {

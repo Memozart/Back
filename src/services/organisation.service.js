@@ -39,7 +39,7 @@ const createProfessionalOrganisation = async (
     throw new error('Le paramètre ne peut pas être un compte personnel');
   }
 
-  Organisation.create({
+  await Organisation.create({
     name: organisationName,
     accountUserLimit: organisationType.limit_user,
     accountTypeName: organisationType.name,
@@ -50,8 +50,8 @@ const createProfessionalOrganisation = async (
 };
 
 /**
- * 
- * Récupérer les informations non confidentielle de l'organisation (peut importe son type) par son id 
+ *
+ * Récupérer les informations non confidentielle de l'organisation (peut importe son type) par son id
  * @param {*} userId l'utilisateur qui réalise la demande
  * @param {*} organisationId l'organisation qui doit être récupérer
  * @returns l'organisation si l'utilisateur est PRÉSENT sinon rien
@@ -64,19 +64,18 @@ const getOrganisationById = async (userId, organisationId) => {
 };
 
 /**
- * Récupérer les informations de l'organisation (peut importe son type) par son id 
+ * Récupérer les informations de l'organisation (peut importe son type) par son id
  * @param {*} userId l'utilisateur qui réalise la demande
- * @param {*} organisationId l'organisation qui doit être récupérer 
+ * @param {*} organisationId l'organisation qui doit être récupérer
  * @returns l'organisation si l'utilisateur est ADMINISTRATEUR sinon rien
  */
-const getOrganisationIfAdmin = async (userId, organisationId)=> {
+const getOrganisationIfAdmin = async (userId, organisationId) => {
   const organisation = await Organisation.findOne({
     _id: organisationId,
     admin: userId,
   });
   return organisation;
 };
-
 
 /**
  * Récupérer toutes les organisations dans laquel l'utilisateur est présent
@@ -92,15 +91,15 @@ const getAllOrganisationsByUserId = async (userId) => {
 
 /**
  * Ajoute un utilisateur dans l'organisation
- * 
+ *
  * ⚠ passe par un pre 'findOneAndUpdate' dans le model organisation avant la requete
  * @param {*} userId l'utilisateur qui réalise la demande
- * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter 
+ * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter
  * @param {*} userIdAdded  l'utilisateur à ajouter
  * @returns l'organisation avec la nouvelle personne ajouté (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
  */
 const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
-  return Organisation.findOneAndUpdate(
+  const data = await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $push: { users: userIdAdded } },
     {
@@ -108,19 +107,24 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
       runValidators: true, // run pre query on schema
     }
   );
+  return data;
 };
 
 /**
  * supprime un utilisateur de l'organisation
- * 
+ *
  * ⚠ passe par un pre 'findOneAndUpdate' dans le model organisation avant la requete
  * @param {*} userId l'utilisateur qui réalise la demande
- * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter 
+ * @param {*} organisationId l'organisation dans laquelle l'utilisateur doit être rajouter
  * @param {*} userIdAdded  l'utilisateur à supprimer
  * @returns l'organisation sans la personne (étant donné que seul un admin peut ajouter il peut récupérer la liste de tous les membres)
  */
-const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) => {
-  return Organisation.findOneAndUpdate(
+const userLeaveInOrganisation = async (
+  userId,
+  organisationId,
+  userIdDeleted
+) => {
+  return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { users: userIdDeleted } },
     {
@@ -130,27 +134,73 @@ const userLeaveInOrganisation = async (userId, organisationId, userIdDeleted) =>
   );
 };
 
-const addCardToOrganisation = async(userId, organisationId, cardId)=>{
-  return Organisation.findOneAndUpdate(
+const addCardToOrganisation = async (
+  userId,
+  organisationId,
+  cardId,
+  runPreValidator = true
+) => {
+  return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $push: { cards: cardId } },
     {
       new: true, // return the updated document instead of the original
-      runValidators: true, // run pre query on schema
+      runValidators: runPreValidator,
     }
   );
 };
 
-const removeCardToOrganisation = async(userId, organisationId, cardId)=>{
-  return Organisation.findOneAndUpdate(
+const removeCardToOrganisation = async (
+  userId,
+  organisationId,
+  cardId,
+  runPreValidator = true
+) => {
+  return await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { card: cardId } },
     {
       new: true, // return the updated document instead of the original
-      runValidators: true, // run pre query on schema
+      runValidators: runPreValidator,
     }
   );
 };
+
+/**
+ * Récupérer toutes les cartes d'un utilisateur dans une organisation
+ * @param {number} userId
+ * @param {number} organisationId
+ * @returns
+ */
+const getAllUserCard = async (userId, organisationId) => {
+  return await Organisation.findOne({
+    _id: organisationId,
+    $or: [{ users: userId }, { admin: userId }],
+  }).populate({
+    path: 'cards',
+    populate: {
+      path: 'theme',
+    },
+  });
+};
+
+/**
+ * vérifie que l'utilisateur à bien les droit de modification sur la carte
+ * en vérifiant si l'utilisateur est adminisatrateur et si la carte existe.
+ * @param {*} userId l'utilisateur qui réalise la demande
+ * @paraym {*} organisationId l'organisation qui doit être récupérer
+ * @paraym {*} cardId lde la carte à modifier
+ * @returns true si a les droits sinon false
+ */
+const hasRoleToManageCard = async (userId, organisationId, cardId) => {
+  const organisation = await Organisation.findOne({
+    _id: organisationId,
+    admin: userId,
+    cards: cardId,
+  });
+  return organisation ? true : false;
+};
+
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,
@@ -160,5 +210,7 @@ module.exports = {
   userLeaveInOrganisation,
   getOrganisationIfAdmin,
   addCardToOrganisation,
-  removeCardToOrganisation
+  removeCardToOrganisation,
+  getAllUserCard,
+  hasRoleToManageCard,
 };

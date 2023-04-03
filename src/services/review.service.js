@@ -29,11 +29,15 @@ const createReview = (
     isEmpty(themeId)
   )
     throw new Error(ERROR_MESSAGE.PARAMETER_EMPTY);
+  
+  const today = dayjs().utc().startOf('day');
+  const dateCard = dateNextPresentation ? dayjs(dateNextPresentation,'YYYY-MM-DD').utc(true) : today;
   if (
-    dateNextPresentation &&
-    dayjs.utc(dateNextPresentation, 'YYYY-MM-DD').isBefore(dayjs().utc())
-  )
+    dateCard.isBefore(today)
+  ) {
     throw new Error('The first presentation date cannot be before today!');
+  }
+
 
   if (!dateNextPresentation)
     dateNextPresentation = dayjs()
@@ -66,7 +70,7 @@ const getOldestReviewByTheme = async (
     user: userId,
     organisation: organisationId,
     theme: themeId,
-    nextPresentation: { $lte: dateMaxReview },
+    nextPresentation: { $lt: dateMaxReview },
   };
   const count = await Review.countDocuments(query);
   const totalPages = Math.ceil(count / pageSize);
@@ -228,10 +232,18 @@ const previousStep = async (review, steps) => {
   return await Review.findByIdAndUpdate(review._id, review, { new: true }).populate(['step']);
 };
 
+const updateThemeByIdCardAndIdOrganisation= async (cardId, organisationId, themeId) =>{
+  return await Review.updateMany({
+    card : cardId,
+    organisation : organisationId
+  },{ $set: { theme: themeId } });
+};
+
 module.exports = {
   checkUserAnswer,
   nextStep,
   previousStep,
   createReview,
   getOldestReviewByTheme,
+  updateThemeByIdCardAndIdOrganisation
 };
