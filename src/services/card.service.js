@@ -55,13 +55,6 @@ const create = async (cardBody, userId, organisationId) => {
   return card;
 };
 
-const get = async (id) => {
-  return Card.findById(id);
-};
-
-const getAll = async () => {
-  return Card.find().populate('theme');
-};
 /**
  * Mets à jour la carte grâce à son id et toutes les reviews
  * associés pour prévenir le changement de thème
@@ -88,8 +81,6 @@ const remove = async (id) => {
 
 module.exports = {
   create,
-  get,
-  getAll,
   update,
   remove,
 };

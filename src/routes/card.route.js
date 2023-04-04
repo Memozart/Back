@@ -5,8 +5,6 @@ const validate = require('../middlewares/validate');
 const userMiddleware = require('../middlewares/user.middleware');
 const cardMiddleware = require('../middlewares/card.middleware');
 
-router.get('/:id', userMiddleware.isConnected, cardController.get);
-router.get('/', userMiddleware.isConnected, cardController.getAll);
 router.post(
   '/',
   [userMiddleware.isConnected, validate(cardValidation.create)],

@@ -39,7 +39,7 @@ const createProfessionalOrganisation = async (
     throw new error('Le paramètre ne peut pas être un compte personnel');
   }
 
-  await Organisation.create({
+  return await Organisation.create({
     name: organisationName,
     accountUserLimit: organisationType.limit_user,
     accountTypeName: organisationType.name,
