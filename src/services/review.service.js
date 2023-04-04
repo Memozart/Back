@@ -15,7 +15,7 @@ dayjs.extend(utc);
  * @param {*} dateNextPresentation la date de la prochaine Présentation pour l'utilisateur
  * @returns la révision
  */
-const createReview = (
+const createReview = async (
   userId,
   organisationId,
   cardId,
@@ -47,14 +47,14 @@ const createReview = (
   else{
     dateNextPresentation = dayjs.utc(dateNextPresentation, 'YYYY-MM-DD').startOf('day');
   }
-
+  const stepOne =  await Step.findOne();
   return Review.create({
     card: new mongoose.Types.ObjectId(cardId),
     organisation: new mongoose.Types.ObjectId(organisationId),
     user: new mongoose.Types.ObjectId(userId),
     nextPresentation: dateNextPresentation,
     theme: new mongoose.Types.ObjectId(themeId),
-    step: new mongoose.Types.ObjectId('640f9ba0334e910d6ed41e67'), // step one
+    step: stepOne._id, // step one
   });
 };
 
