@@ -1,12 +1,17 @@
 const setup = require('../../config/setup.config');
 const reviewService = require('../../../src/services/review.service');
-const { Review } = require('../../../src/models');
+const { Review, Step } = require('../../../src/models');
 const { ERROR_MESSAGE } = require('../../../src/utils/constants');
 const dayjs = require('dayjs');
 const mongoose = require('mongoose');
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
+jest.mock('../../../src/models/step.model', () => ({
+  // Mock des méthode du models
+  findOne: jest.fn(),
+  create: jest.fn(),
+}));
 
 describe('review service - create review', () => {
   //#region SETUP TEST
@@ -61,7 +66,13 @@ describe('review service - create review', () => {
     //arrange
     const expectedDate = dayjs().utc().add(1, 'day').format('DD/MM/YYYY') + ' 00:00:00';
     const spy = jest.spyOn(Review, 'create');
-
+    Step.findOne.mockReturnValue({
+      _id: new mongoose.Types.ObjectId(setup.fakeData.stepId),
+      day: '1',
+      info: 'test',
+      order: 1,
+      step: 1,
+    });
     //act
     const review = await reviewService.createReview(
       setup.fakeData.userId,
