@@ -19,3 +19,4 @@ Fonctionnalité: Est on vendredi
     | Sunday            | Nope    |
     | another           | Nope    |
     | anything else!    | Nope    |
+  

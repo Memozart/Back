@@ -1,5 +1,5 @@
 let common=[
-  'tests/features/is_it_friday_yet.feature',
+  'tests/features/*.feature',
   '--format-options {"snippetInterface":"async-await"}',
   '--publish-quiet'
 ].join(' ');
@@ -7,4 +7,4 @@ let common=[
 
 module.exports={
   default:common
-}
+};
