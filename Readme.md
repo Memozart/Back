@@ -1,6 +1,6 @@
 # MemozartFront
 
-Partie backend
+15/07/2023 => migration nouveau serveur
 
 ## Le projet:
 
