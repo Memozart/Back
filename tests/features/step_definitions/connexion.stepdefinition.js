@@ -27,6 +27,6 @@ Then('il reçoit une réponse avec un code erreur {int}', async function (expect
 });
 
 
-Then('il reçoit une réponse avec un message {string}', async function (expectedAnswer) {
+Then('une réponse avec un message {string}', async function (expectedAnswer) {
   expect(this.message).be.contains(expectedAnswer);
 });

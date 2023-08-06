@@ -1,7 +1,9 @@
-async function HTTP_POST(realUrl, body) {
+async function HTTP_POST(realUrl, body, token = undefined) {
   const headers = {};
   headers['content-type'] = 'application/json';
-
+  if(token != undefined)
+    headers['Authorization'] = `Bearer ${token}`;
+  
   const response = fetch(realUrl, {
     method: 'POST',
     headers: headers,

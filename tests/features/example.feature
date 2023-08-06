@@ -1,5 +1,8 @@
 # language: fr
 
+# documentation officielle de cucumber:  https://cucumber.io/docs/guides/
+# mots clé par langue: https://cucumber.io/docs/gherkin/languages/
+
 Fonctionnalité: Est on vendredi
   Tout le monde veut savoir si on est vendredi
 
