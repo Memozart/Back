@@ -48,6 +48,10 @@ const setToken = async (time = '10s') => {
   });
 };
 
+/**
+ * Permets de supprimer tous les enregistrements
+ * présent dans la base de données
+ */
 const clearDatabase = async () => {
   await User.deleteMany();
   await mongoose.disconnect();
