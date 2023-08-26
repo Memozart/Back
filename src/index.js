@@ -8,14 +8,12 @@ const port = config.port || 3000;
 const urlBack = config.urlBack || 'http://localhost';
 const logger = createLogger();
 
-
 if (!config.db.url) {
   logger.error('No .env file found');
   process.exit(1);
 }
+
 mongoose.set('strictQuery', false);
-
-
 mongoose.connect(
   `${config.db.url}${config.db.dbName}?authSource=admin&replicaSet=db-mongodb-fra1-85036&tls=true`,
   () => {

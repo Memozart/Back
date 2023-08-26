@@ -4,16 +4,6 @@ const organisationService = require('./organisation.service');
 const dayjs = require('dayjs');
 
 /**
- * retourne la carte par son Id
- * @param {*} cardId identifiant de la carte
- * @returns la carte ou undefined
- */
-const getbyId = async(cardId) =>{
-  return await Card.findById(cardId);
-};
-
-
-/**
  * Créer un carte si le demandeur est admin de l'organisation
  * et créer une révision à tous les membres de cette organisation.
  * @param {*} cardBody les informations obligatoires d'une carte
@@ -93,6 +83,5 @@ const remove = async (id) => {
 module.exports = {
   create,
   update,
-  remove,
-  getbyId
+  remove
 };

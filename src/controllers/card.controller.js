@@ -3,16 +3,6 @@ const catchAsync = require('../utils/catchAsync');
 const { successF } = require('../utils/message');
 const tool = require('../utils/tool');
 
-/**
- * Retourne la carte par son ID
- */
-const getbyId = catchAsync(async (req, res, next) => {
-  const {id:cardId} = req.params;
-  const card = await cardService.getbyId(cardId);
-  successF('Card asked', card, 200, res, next);
-});
-
-
 const create = catchAsync(async (req, res, next) => {
   const { userId, currentOrganisationId } = tool.getUserIdAndOrganisationId(req);
   const card = await cardService.create(req.body, userId, currentOrganisationId);
@@ -34,6 +24,5 @@ const remove = catchAsync(async (req, res, next) => {
 module.exports = {
   create,
   update,
-  remove,
-  getbyId
+  remove
 };

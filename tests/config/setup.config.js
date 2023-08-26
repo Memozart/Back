@@ -8,6 +8,9 @@ const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
 let mongo;
+/**
+ * Jeu de fausse données contenant tout les ID des tests
+ */
 const fakeData = {
   userId: '600000000000000000000000',
   themeId: '611111111111111111111111',
@@ -29,6 +32,7 @@ const fakeData = {
   },
   str_test : 'test'
 };
+
 /**
  * Démarrer l'instance MongoDB en mémoire avant les tests
  */
@@ -44,10 +48,18 @@ const startMongoMemory = async () => {
   createUser();
 };
 
+/**
+ * Créér l'utilisateur utilisé pendant la phase de test
+ */
 const createUser = async () => {
   await User.create(fakeData.user);
 };
 
+
+/**
+ * Génère un token avec les informations de l'utilisateur test
+ * @param {*} time le temps de validité du token
+*/
 const setToken = async (time = '10s') => {
   return jwt.sign({ user: fakeData.user }, config.jwt.secret, {
     expiresIn: time,
@@ -56,7 +68,7 @@ const setToken = async (time = '10s') => {
 
 /**
  * Permets de supprimer tous les enregistrements
- * présent dans la base de données et de se déconnecter de la base
+ * présent dans la base de données en mémoire et de se déconnecter de la base
  */
 const clearDatabaseAndDisconnect= async () => {
   await User.deleteMany();
@@ -66,7 +78,8 @@ const clearDatabaseAndDisconnect= async () => {
 
 /**
  * Permets de supprimer tous les enregistrements
- * présent dans la base de données
+ * présent dans la base de données et de réinitilisater un jeu de données
+ * complet
  */
 const clearDatabaseAndResetData = async () => {
   await clearAllDatas();
@@ -138,7 +151,6 @@ const initialiseDataset = async () => {
 /**
  * Créer une review en base avec une date
  * de présentation d'il y a 2 jours
- * @returns la review créée
  */
 const createReview  = async ()=>{
   const twoDaysAgo = dayjs().utc().subtract(2, 'days').format('YYYY-MM-DD');

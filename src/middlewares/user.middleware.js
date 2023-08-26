@@ -36,7 +36,7 @@ const isConnected = async (req, res, next) => {
       return errorF('Not authorized', err, 401, res, next);
     }
     req.user = user.user;
-    delete req?.user?.password;
+    delete req.user.password;
   });
   next();
 };
