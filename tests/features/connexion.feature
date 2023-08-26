@@ -8,4 +8,3 @@ Fonctionnalité: Connexion
     Étant donné qu'un utilisateur ne renseigne pas son email
     Quand il tente de se connecter
     Alors il reçoit une réponse avec un code erreur 400
-    Et une réponse avec un message "\"email\" is not allowed to be empty"

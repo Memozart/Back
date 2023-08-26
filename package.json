@@ -5,14 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "npx eslint src && node src/index.js",
-    "start-on-memory": "npx eslint src && echo yes | npx kill-port 3000 && node src/index.js memory",
     "lint": "eslint .",
     "lint:fix": "npx eslint src --fix",
     "prepare": "husky install",
     "test": "jest --testEnvironment=node --runInBand",
-    "cucumber": "cucumber-js",
-    "bdd": "start /b npm run start-on-memory && npx wait-on http://localhost:3000/ && npx cucumber-js"
-
+    "cucumber": "cucumber-js"
   },
   "author": "",
   "license": "ISC",

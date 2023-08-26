@@ -1,27 +1,33 @@
 const jwt = require('jsonwebtoken');
 const config = require('../../src/config');
-const { User, Card, Organisation, Theme, Step } = require('../../src/models');
+const { User, Card, Organisation, Theme, Step, Review } = require('../../src/models');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+dayjs.extend(utc);
 
 let mongo;
 const fakeData = {
-  userId: '6111a1111a1a11111a11a1aa',
-  themeId: '6222a1111a1a11111a11a1aa',
-  organisationId: '6333a1111a1a11111a11a1aa',
-  cardId: '6444a1111a1a11111a11a1aa',
-  stepId: '640f9ba0334e910d6ed41e67',
+  userId: '600000000000000000000000',
+  themeId: '611111111111111111111111',
+  organisationId: '644444444444444444444444',
+  cardId: '655555555555555555555555',
+  stepId: '666666666666666666666666',
+  stepId2: '677777777777777777777777',
+  reviewId: '688888888888888888888888',
   user: {
-    _id: new mongoose.Types.ObjectId('6111a1111a1a11111a11a1aa'),
+    _id: new mongoose.Types.ObjectId('600000000000000000000000'),
     email: 'test@test.fr',
     password: '$2a$10$B6xS9CT5m.I8CjjS78lP3Ovuh0QuW8doTHu0VorXGecKFfkoWmRH2', // testtest
     firstName: 'test',
     lastName: 'test',
     currentOrganisation: {
-      _id: '6333a1111a1a11111a11a1aa',
+      _id: '644444444444444444444444',
       name: 'test',
     }
-  }
+  },
+  str_test : 'test'
 };
 /**
  * Démarrer l'instance MongoDB en mémoire avant les tests
@@ -50,56 +56,110 @@ const setToken = async (time = '10s') => {
 
 /**
  * Permets de supprimer tous les enregistrements
- * présent dans la base de données
+ * présent dans la base de données et de se déconnecter de la base
  */
-const clearDatabase = async () => {
+const clearDatabaseAndDisconnect= async () => {
   await User.deleteMany();
   await mongoose.disconnect();
   await mongo.stop();
 };
 
+/**
+ * Permets de supprimer tous les enregistrements
+ * présent dans la base de données
+ */
+const clearDatabaseAndResetData = async () => {
+  await clearAllDatas();
+  await createReview();
+  await initialiseDataset();
+};
+
+
+/**
+ * Efface toutes les données 
+ * en base de données
+ */
+const clearAllDatas = async () =>{
+  await Theme.deleteMany();
+  await Step.deleteMany();
+  await Card.deleteMany();
+  await Organisation.deleteMany();
+  await Review.deleteMany();
+};
+
+/**
+ * Créer un jeu de données de base
+ * à injecter dans la base de données
+ */
 const initialiseDataset = async () => {
-  Theme.create({
+  await Theme.create({
     _id: fakeData.themeId,
-    name: 'test',
-    color1: 'test',
-    color2: 'test',
-    darkColor: 'test',
-    darkShadow: 'test',
-    icon: 'test',
-    lightShadow: 'test'
+    name: fakeData.str_test,
+    color1: fakeData.str_test,
+    color2: fakeData.str_test,
+    darkColor: fakeData.str_test,
+    darkShadow: fakeData.str_test,
+    icon: fakeData.str_test,
+    lightShadow: fakeData.str_test
   });
-  Step.create({
+  await Step.create({
     _id: fakeData.stepId,
     day: '1',
-    info: 'test',
+    info: fakeData.str_test,
     order: 1,
     step: 1,
   });
-  Card.create({
+  await Step.create({
+    _id: fakeData.stepId2,
+    day: '2',
+    info: fakeData.str_test+'2',
+    order: 2,
+    step: 2,
+  });
+  await Card.create({
     _id: fakeData.cardId,
-    answer: 'test',
-    question: 'test',
-    help: 'test',
+    answer: fakeData.str_test,
+    question: fakeData.str_test,
+    help: fakeData.str_test,
     theme: new mongoose.Types.ObjectId(fakeData.themeId),
   });
-  Organisation.create({
+  await Organisation.create({
     _id: fakeData.organisationId,
     accountTypeId: 1,
-    accountTypeName: 'test',
+    accountTypeName: fakeData.str_test,
     admin: [new mongoose.Types.ObjectId(fakeData.userId)],
     users: [],
-    name: 'test',
+    name: fakeData.str_test,
     accountUserLimit: 1,
     cards: [new mongoose.Types.ObjectId(fakeData.cardId)],
+  });
+};
+
+/**
+ * Créer une review en base avec une date
+ * de présentation d'il y a 2 jours
+ * @returns la review créée
+ */
+const createReview  = async ()=>{
+  const twoDaysAgo = dayjs().utc().subtract(2, 'days').format('YYYY-MM-DD');
+  await Review.create({
+    _id: fakeData.reviewId,
+    user: fakeData.userId,
+    organisation: fakeData.organisationId,
+    card: fakeData.cardId,
+    theme: fakeData.themeId,
+    nextPresentation: twoDaysAgo,
+    step: fakeData.stepId
   });
 };
 
 module.exports = {
   startMongoMemory,
   setToken,
-  clearDatabase,
+  clearDatabaseAndDisconnect,
   fakeData,
   initialiseDataset,
-  createUser
+  createUser,
+  createReview,
+  clearDatabaseAndResetData
 };
