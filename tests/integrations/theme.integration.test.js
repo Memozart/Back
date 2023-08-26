@@ -36,7 +36,7 @@ describe('Sample Test', () => {
 //   //#endregion
 
 //   afterAll(async () => {
-//     await setup.clearDatabase();
+//     await setup.clearDatabaseAndDisconnect();
 //   });
 
 //   test('Integration- should be return one theme', async () => {
@@ -82,7 +82,7 @@ describe('Sample Test', () => {
 
 //   // Arrêter l'instance MongoDB après les tests
 //   afterAll(async () => {
-//     await setup.clearDatabase();
+//     await setup.clearDatabaseAndDisconnect();
 //   });
 
 //   test('Integration- should be return all theme', async () => {
