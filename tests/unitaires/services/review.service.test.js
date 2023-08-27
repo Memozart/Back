@@ -26,7 +26,7 @@ describe('review service - create review', () => {
 
 
   afterAll(async () => {
-    await setup.clearDatabase();
+    await setup.clearDatabaseAndDisconnect();
   });
   //#endregion
 

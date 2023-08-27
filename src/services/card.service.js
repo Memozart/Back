@@ -2,6 +2,7 @@ const { Card, Review } = require('../models');
 const reviewService = require('./review.service');
 const organisationService = require('./organisation.service');
 const dayjs = require('dayjs');
+
 /**
  * Créer un carte si le demandeur est admin de l'organisation
  * et créer une révision à tous les membres de cette organisation.
@@ -82,5 +83,5 @@ const remove = async (id) => {
 module.exports = {
   create,
   update,
-  remove,
+  remove
 };

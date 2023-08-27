@@ -30,7 +30,7 @@ describe('Sample Test', () => {
 //   });
   
 //   afterAll(async () => {
-//     await setup.clearDatabase();
+//     await setup.clearDatabaseAndDisconnect();
 //   });
 //   //#endregion
 //   test('should be return one theme', async () => {
@@ -77,7 +77,7 @@ describe('Sample Test', () => {
 
 //   // Arrêter l'instance MongoDB après les tests
 //   afterAll(async () => {
-//     await setup.clearDatabase();
+//     await setup.clearDatabaseAndDisconnect();
 //   });
 
 //   test('should be return all themes', async () => {
