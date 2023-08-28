@@ -16,24 +16,22 @@ Before(async () => {
 //#endregion
 
 //#region COMMON STEP
-Given('un utilisateur à une carte à réviser', async function () {
-  this.token = await setToken('1m');
-  this.firstReviewId = fakeData.firstReviewId;
-});
-
-Then('il recoit un statut réponse qui dit {string}', async function (string) {
-  const result = String(this.body.statusResponse.success) === string;
-  assert.ok(result);
+Then('la nouvelle présentation devrait avoir lieu dans {int} jours', async function (int) {
+  const result = this.body .statusResponse?.feedback?.dayNextPresentation;
+  assert.equal(int, result);
 });
 //#endregion
 
-//#region Un utilisateur va réviser une carte et donner une bonne réponse
+//#region Un utilisateur va réviser une carte à l'étape 1 et va donner une bonne réponse
+Given('un utilisateur à une carte à réviser à la premiere step', async function () {
+  this.reviewId = fakeData.firstReviewId;
+});
 
-When('il donne la bonne réponse', async function () {
+When('il donne la bonne réponse à l\'algorithme', async function () {
 
   const userResponse = {
     answer: fakeData.str_test,
-    idReview: this.firstReviewId
+    idReview: this.reviewId
   };
   this.token = await setToken('1m');
 
@@ -49,11 +47,17 @@ When('il donne la bonne réponse', async function () {
   this.status = status;
   this.body = body?.body;
 });
+//#endregion
 
-When('il donne la mauvaise réponse', async function () {
+//#region Un utilisateur va réviser une carte à l'étape 2 et est va donner une mauvaise réponse
+Given('un utilisateur à une carte à réviser à la seconde step', async function () {
+  this.reviewId = fakeData.secondReviewId;
+});
+
+When('il donne une mauvaise réponse à l\'algorithme', async function () {
   const userResponse = {
-    answer: '',
-    idReview: this.firstReviewId
+    answer: "",
+    idReview: this.reviewId
   };
   this.token = await setToken('1m');
 
@@ -69,5 +73,4 @@ When('il donne la mauvaise réponse', async function () {
   this.status = status;
   this.body = body?.body;
 });
-
 //#endregion
