@@ -50,7 +50,7 @@ Given('un utilisateur créée une carte', async function () {
     question: 'un utilisateur créée une carte',
     answer: 'un utilisateur créée une carte',
     help: 'un utilisateur créée une carte',
-    theme: new mongoose.Types.ObjectId(fakeData.themeId),
+    theme: new mongoose.Types.ObjectId(fakeData.firstThemeId),
   };
 });
 
@@ -75,7 +75,7 @@ Given('un utilisateur modifie une carte', async function () {
     question: 'question modifiée',
     help: 'aide modifiée',
     answer: 'réponse modifiée',
-    theme: new mongoose.Types.ObjectId(fakeData.themeId),
+    theme: new mongoose.Types.ObjectId(fakeData.firstThemeId),
   };
 });
 
