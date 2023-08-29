@@ -56,7 +56,7 @@ Given('un utilisateur à une carte à réviser à la seconde step', async functi
 
 When('il donne une mauvaise réponse à l\'algorithme', async function () {
   const userResponse = {
-    answer: "",
+    answer: '',
     idReview: this.reviewId
   };
   this.token = await setToken('1m');

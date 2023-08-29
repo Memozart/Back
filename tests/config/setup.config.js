@@ -119,12 +119,12 @@ const initialiseDataset = async () => {
   });
   await Theme.create({
     _id: fakeData.secondThemeId,
-    name: fakeData.str_test + "2",
+    name: fakeData.str_test + '2',
     color1: fakeData.str_test,
     color2: fakeData.str_test,
     darkColor: fakeData.str_test,
     darkShadow: fakeData.str_test,
-    icon: fakeData.str_test + "2",
+    icon: fakeData.str_test + '2',
     lightShadow: fakeData.str_test
   });
   await Step.create({
