@@ -2,8 +2,9 @@ const { Review, Step } = require('../models');
 const dayjs = require('dayjs');
 const mongoose = require('mongoose');
 const { isEmpty } = require('../utils/tool');
-const { ERROR_MESSAGE } = require('../utils/constants');
+const { ERROR_MESSAGE, CONFIG_SEQUENCE_DEMO } = require('../utils/constants');
 const utc = require('dayjs/plugin/utc');
+const config = require('../config');
 dayjs.extend(utc);
 
 /**
@@ -33,7 +34,7 @@ const createReview = async (
   const today = dayjs().utc().startOf('day');
   const dateCard = dateNextPresentation ? dayjs(dateNextPresentation,'YYYY-MM-DD').utc(true) : today;
   if (
-    dateCard.isBefore(today)
+    dateCard.isBefore(today) && !config.isDemo
   ) {
     throw new Error('The first presentation date cannot be before today!');
   }
@@ -65,12 +66,12 @@ const getOldestReviewByTheme = async (
   page = 1
 ) => {
   const pageSize = 1;
-  const dateMaxReview = dayjs().utc().add(1, 'day').startOf('day');
+  const dateMaxReview = CONFIG_SEQUENCE_DEMO.getMaxDateReview();
   const query = {
     user: userId,
     organisation: organisationId,
     theme: themeId,
-    nextPresentation: { $lt: dateMaxReview },
+    nextPresentation: { [`${CONFIG_SEQUENCE_DEMO.criteriaSearchDate}`]: dateMaxReview }
   };
   const count = await Review.countDocuments(query);
   const totalPages = Math.ceil(count / pageSize);
@@ -187,8 +188,8 @@ const nextStep = async (review, steps) => {
     const step = steps.find((step) => step.order === order);
     const { day, _id } = step;
     const dateNextPresentation = dayjs().utc()
-      .add(day, 'day')
-      .startOf('day');
+      .add(day, CONFIG_SEQUENCE_DEMO.timeSequence)
+      .startOf(CONFIG_SEQUENCE_DEMO.timeSequence);
 
     review.step = _id;
     review.nextPresentation = dateNextPresentation;
@@ -196,8 +197,8 @@ const nextStep = async (review, steps) => {
     const step = steps.find((step) => step.order === order + 1);
     const { day, _id } = step;
     const dateNextPresentation = dayjs().utc()
-      .add(day, 'day')
-      .startOf('day');
+      .add(day, CONFIG_SEQUENCE_DEMO.timeSequence)
+      .startOf(CONFIG_SEQUENCE_DEMO.timeSequence);
     review.step = _id;
     review.nextPresentation = dateNextPresentation;
   }
@@ -216,15 +217,15 @@ const previousStep = async (review, steps) => {
   const { order } = review.step;
   if (order == 1) {
     const dateNextPresentation = dayjs().utc()
-      .add(1, 'day')    
-      .startOf('day');
+      .add(1, CONFIG_SEQUENCE_DEMO.timeSequence)    
+      .startOf(CONFIG_SEQUENCE_DEMO.timeSequence);
     review.nextPresentation = dateNextPresentation;
   } else {
     const step = steps.find((step) => step.order === order - 1);
     const { day, _id } = step;
     const dateNextPresentation = dayjs().utc()
-      .add(day, 'day')
-      .startOf('day');
+      .add(day, CONFIG_SEQUENCE_DEMO.timeSequence)
+      .startOf(CONFIG_SEQUENCE_DEMO.timeSequence);
     review.step = _id;
     review.nextPresentation = dateNextPresentation;
   }

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
+const { CONFIG_SEQUENCE_DEMO } = require('../utils/constants');
 dayjs.extend(utc);
 
 const getReviewsTotal = async (userId, organisationId) => {
@@ -25,9 +26,7 @@ const getReviewsDone = async (userId, organisationId) => {
 };
 
 const getReviewsOfAllThemes = async (userId, organisationId) => {
-  const dateMaxReview = new Date();
-  dateMaxReview.setUTCHours(0, 0, 0, 0);
-  dateMaxReview.setDate(dateMaxReview.getDate() + 1);
+  const dateMaxReview = CONFIG_SEQUENCE_DEMO.getMaxDateReview().toDate();
   return await Theme.aggregate([
     {
       $lookup: {
@@ -55,7 +54,7 @@ const getReviewsOfAllThemes = async (userId, organisationId) => {
               $and: [
                 { $eq: ['$$review.user', ObjectId(userId)] },
                 { $eq: ['$$review.organisation', ObjectId(organisationId)] },
-                { $lt: ['$$review.nextPresentation', dateMaxReview] },
+                { [`${CONFIG_SEQUENCE_DEMO.criteriaSearchDate}`]: ['$$review.nextPresentation', dateMaxReview] },
                 { $eq: ['$$review.theme', '$_id'] },
               ],
             },

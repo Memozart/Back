@@ -7,6 +7,7 @@ module.exports = {
   version: require('../../package.json').version,
   env: process.env.NODE_ENV,
   urlBack: process.env.URL_BACK,
+  isDemo: process.env.IS_DEMO === 'true' ? true : false,
   db: {
     url: process.env.DB_URL,
     replicaSet: process.env.DB_REPLICA_SET,
