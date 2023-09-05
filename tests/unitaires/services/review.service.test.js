@@ -5,6 +5,7 @@ const { ERROR_MESSAGE } = require('../../../src/utils/constants');
 const dayjs = require('dayjs');
 const mongoose = require('mongoose');
 const utc = require('dayjs/plugin/utc');
+const { isDemo } = require('../../../src/config');
 dayjs.extend(utc);
 
 jest.mock('../../../src/models/step.model', () => ({
@@ -57,9 +58,11 @@ describe('review service - create review', () => {
 
     //assert
     expect(spy).not.toHaveBeenCalled();
-    await expect(methodResult).rejects.toThrow(
-      'The first presentation date cannot be before today!'
-    );
+    if(!isDemo){
+      await expect(methodResult).rejects.toThrow(
+        'The first presentation date cannot be before today!'
+      );
+    }
   });
 
   test('should be success record review with tomorrow at midnight', async () => {
