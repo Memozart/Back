@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       ref :'Organisation'
     },
+    devices: [{
+      type: types.Object,
+      required: false,
+      trim: true,
+    }],
   },
   { versionKey: false }
 );

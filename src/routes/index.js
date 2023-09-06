@@ -7,6 +7,7 @@ const reviewRoutes = require('./review.route');
 const stepRoutes = require('./step.route');
 const statRoutes = require('./stat.route');
 const userRoute = require('./user.route');
+const messagingRoute = require('./messaging.route');
 
 const defaultRoutes = [
   {
@@ -40,6 +41,10 @@ const defaultRoutes = [
   {
     path: '/users',
     route: userRoute,
+  },
+  {
+    path: '/messaging',
+    route: messagingRoute,
   },
 ];
 
