@@ -23,4 +23,12 @@ module.exports = {
     refreshSecret: process.env.JWT_REFRESH_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN,
   },
+  stripe: {
+    secret: process.env.STRIPE_SECRET,
+    cancelUrl: process.env.STRIPE_CANCEL_URL,
+    successUrl: process.env.STRIPE_SUCCESS_URL,
+  },
+  insee: {
+    secret: process.env.INSEE_SECRET,
+  }
 };

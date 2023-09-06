@@ -152,6 +152,7 @@ const initialiseDataset = async () => {
     _id: fakeData.organisationId,
     accountTypeId: 1,
     accountTypeName: fakeData.str_test,
+    siren: '123456789',
     admin: [new mongoose.Types.ObjectId(fakeData.userId)],
     users: [],
     name: fakeData.str_test,
