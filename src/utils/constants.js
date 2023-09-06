@@ -1,3 +1,8 @@
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const config = require('../config');
+dayjs.extend(utc);
+
 
 const TYPE_ACCOUNT = {
   Personal : { id: 1 , name : 'personnel',  limit_user : 1 , limit_card : 10000 },
@@ -11,7 +16,21 @@ const ERROR_MESSAGE = {
   PARAMETER_EMPTY : 'The parameter cannot be empty'
 };
 
+const CONFIG_SEQUENCE_DEMO = config.isDemo === true ? 
+  {
+    timeSequence : 'minutes', 
+    getMaxDateReview : () => dayjs().utc().startOf('minutes'),
+    criteriaSearchDate:  '$lte'
+  }: 
+  {
+    timeSequence : 'day',
+    getMaxDateReview: () => dayjs().utc().add(1,'day').startOf('day'),
+    criteriaSearchDate : '$lt'
+  };
+
+
 module.exports = {
   TYPE_ACCOUNT,
-  ERROR_MESSAGE
+  ERROR_MESSAGE,
+  CONFIG_SEQUENCE_DEMO
 }; 
