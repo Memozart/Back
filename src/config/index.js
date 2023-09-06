@@ -31,5 +31,6 @@ module.exports = {
   },
   insee: {
     secret: process.env.INSEE_SECRET,
-  }
+  },
+  messagingKey: process.env.MESSAGING_KEY,
 };

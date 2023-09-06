@@ -28,6 +28,7 @@
     "mongodb-memory-server": "^8.11.5",
     "mongoose": "^6.9.1",
     "morgan": "^1.10.0",
+    "node-cron": "^3.0.2",
     "redis": "^4.6.5",
     "split": "^1.0.1",
     "stripe": "^13.4.0",

@@ -8,6 +8,8 @@ const { checkIfConnectionStringIsLocal } = require('./utils/tool');
 const port = config.port || 3000;
 const urlBack = config.urlBack || 'http://localhost';
 const logger = createLogger();
+const cron = require('node-cron');
+const messagingService = require('./services/messaging.service');
 
 if (!config.db.url) {
   logger.error('No .env file found');
@@ -26,6 +28,16 @@ mongoose.connect(
       return;
     }
     logger.info(`Connected to database ${ isLocal ? 'en local' :''}`);
+    cron.schedule('*/10 * * * * *', async () => {
+      try {
+        const users = await messagingService.getAllReviewForUsersHaveDevices();
+        users.forEach(user => {
+          messagingService.sendNotification(user.devices, 'Test', 'Test');
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    });
     app.listen(port, () => {
       logger.info(`Server running on ${urlBack}:${port}`);
     });
