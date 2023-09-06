@@ -1,4 +1,4 @@
-# MemozartFront
+# Memozart-Front
 ## Le projet:
 
 ### L'apprentissage espacé ?
