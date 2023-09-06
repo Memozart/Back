@@ -11,7 +11,8 @@ const create = catchAsync(async (req, res, next) => {
 
 const update = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const card = await cardService.update(id, req.body);
+  const { currentOrganisationId } = tool.getUserIdAndOrganisationId(req);
+  const card = await cardService.update(id, req.body, currentOrganisationId);
   successF('Card updated', card, 200, res, next);
 });
 
