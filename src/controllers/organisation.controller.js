@@ -102,6 +102,12 @@ const validPayment = catchAsync(async (req, res, next) => {
   successF('Payement valid', organisation, 200, res, next);  
 });
 
+const getAllUserInOrganisation = catchAsync(async (req, res, next) => {
+  const { userId , currentOrganisationId} = tool.getUserIdAndOrganisationId(req);
+  const allUsers = await organisationService.getAllUserInOrganisation(userId, currentOrganisationId);
+  successF('all users in organisation fetch', allUsers, 200, res, next);
+});
+
 module.exports = {
   create,
   getById,
@@ -109,5 +115,6 @@ module.exports = {
   leave,
   join,
   getAllCards,
-  validPayment
+  validPayment,
+  getAllUserInOrganisation
 };

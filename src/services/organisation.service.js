@@ -219,6 +219,27 @@ const updateOrganisationHavePaid = async (customerId, userId) => {
   );
 };
 
+
+/**
+ * Retour 
+ * @param {*} userId 
+ * @param {*} organisationId 
+ */
+const getAllUserInOrganisation = async (userId, organisationId) => {
+  return await Organisation.findOne({
+    _id: organisationId,
+    admin: userId
+  }).select('name admin users accountUserLimit -_id')
+    .populate({
+      path: 'admin',
+      select: 'firstName lastName _id', // inclus uniquement le champs 'name'
+    })
+    .populate({
+      path: 'users',
+      select: 'firstName lastName _id', // inclus uniquement le champs 'name'
+    });
+};
+
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,
@@ -232,4 +253,5 @@ module.exports = {
   getAllUserCard,
   hasRoleToManageCard,
   updateOrganisationHavePaid,
+  getAllUserInOrganisation
 };
