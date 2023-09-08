@@ -17,6 +17,7 @@ const createPersonnalOrganisation = async (user) => {
     accountTypeName: TYPE_ACCOUNT.Personal.name,
     accountTypeId: TYPE_ACCOUNT.Personal.id,
     havePaid: true,
+    siren: '0',
     cards: [],
     admin: [user._id],
   });
