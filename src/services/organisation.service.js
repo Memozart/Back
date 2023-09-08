@@ -113,7 +113,16 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
       new: true, // return the updated document instead of the original
       runValidators: true, // run pre query on schema
     }
-  );
+  )
+    .select('name admin users accountUserLimit')
+    .populate({
+      path: 'admin',
+      select: 'firstName lastName _id',
+    })
+    .populate({
+      path: 'users',
+      select: 'firstName lastName _id',
+    });
   return data;
 };
 
@@ -138,7 +147,15 @@ const userLeaveInOrganisation = async (
       new: true, // return the updated document instead of the original
       runValidators: true, // run pre query on schema
     }
-  );
+  ).select('name admin users accountUserLimit')
+    .populate({
+      path: 'admin',
+      select: 'firstName lastName _id',
+    })
+    .populate({
+      path: 'users',
+      select: 'firstName lastName _id',
+    });
 };
 
 const addCardToOrganisation = async (
@@ -229,14 +246,14 @@ const getAllUserInOrganisation = async (userId, organisationId) => {
   return await Organisation.findOne({
     _id: organisationId,
     admin: userId
-  }).select('name admin users accountUserLimit -_id')
+  }).select('name admin users accountUserLimit')
     .populate({
       path: 'admin',
-      select: 'firstName lastName _id', // inclus uniquement le champs 'name'
+      select: 'firstName lastName _id',
     })
     .populate({
       path: 'users',
-      select: 'firstName lastName _id', // inclus uniquement le champs 'name'
+      select: 'firstName lastName _id',
     });
 };
 
