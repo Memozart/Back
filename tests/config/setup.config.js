@@ -13,12 +13,14 @@ let mongo;
  */
 const fakeData = {
   userId: '600000000000000000000000',
-  themeId: '611111111111111111111111',
+  firstThemeId: '611111111111111111111111',
+  secondThemeId: '611111111111111111111112',
   organisationId: '644444444444444444444444',
   cardId: '655555555555555555555555',
-  stepId: '666666666666666666666666',
-  stepId2: '677777777777777777777777',
-  reviewId: '688888888888888888888888',
+  firstStepId: '666666666666666666666666',
+  secondStepId: '677777777777777777777777',
+  firstReviewId: '688888888888888888888888',
+  secondReviewId: '688888888888888888888882',
   user: {
     _id: new mongoose.Types.ObjectId('600000000000000000000000'),
     email: 'test@test.fr',
@@ -106,7 +108,7 @@ const clearAllDatas = async () =>{
  */
 const initialiseDataset = async () => {
   await Theme.create({
-    _id: fakeData.themeId,
+    _id: fakeData.firstThemeId,
     name: fakeData.str_test,
     color1: fakeData.str_test,
     color2: fakeData.str_test,
@@ -115,15 +117,25 @@ const initialiseDataset = async () => {
     icon: fakeData.str_test,
     lightShadow: fakeData.str_test
   });
+  await Theme.create({
+    _id: fakeData.secondThemeId,
+    name: fakeData.str_test + '2',
+    color1: fakeData.str_test,
+    color2: fakeData.str_test,
+    darkColor: fakeData.str_test,
+    darkShadow: fakeData.str_test,
+    icon: fakeData.str_test + '2',
+    lightShadow: fakeData.str_test
+  });
   await Step.create({
-    _id: fakeData.stepId,
+    _id: fakeData.firstStepId,
     day: '1',
     info: fakeData.str_test,
     order: 1,
     step: 1,
   });
   await Step.create({
-    _id: fakeData.stepId2,
+    _id: fakeData.secondStepId,
     day: '2',
     info: fakeData.str_test+'2',
     order: 2,
@@ -134,12 +146,13 @@ const initialiseDataset = async () => {
     answer: fakeData.str_test,
     question: fakeData.str_test,
     help: fakeData.str_test,
-    theme: new mongoose.Types.ObjectId(fakeData.themeId),
+    theme: new mongoose.Types.ObjectId(fakeData.firstThemeId),
   });
   await Organisation.create({
     _id: fakeData.organisationId,
     accountTypeId: 1,
     accountTypeName: fakeData.str_test,
+    siren: '123456789',
     admin: [new mongoose.Types.ObjectId(fakeData.userId)],
     users: [],
     name: fakeData.str_test,
@@ -155,13 +168,23 @@ const initialiseDataset = async () => {
 const createReview  = async ()=>{
   const twoDaysAgo = dayjs().utc().subtract(2, 'days').format('YYYY-MM-DD');
   await Review.create({
-    _id: fakeData.reviewId,
+    _id: fakeData.firstReviewId,
     user: fakeData.userId,
     organisation: fakeData.organisationId,
     card: fakeData.cardId,
-    theme: fakeData.themeId,
+    theme: fakeData.firstThemeId,
     nextPresentation: twoDaysAgo,
-    step: fakeData.stepId
+    step: fakeData.firstStepId
+  });
+
+  await Review.create({
+    _id: fakeData.secondReviewId,
+    user: fakeData.userId,
+    organisation: fakeData.organisationId,
+    card: fakeData.cardId,
+    theme: fakeData.secondThemeId,
+    nextPresentation: twoDaysAgo,
+    step: fakeData.secondStepId
   });
 };
 

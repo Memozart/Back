@@ -3,21 +3,32 @@ const catchAsync = require('../utils/catchAsync');
 const { successF } = require('../utils/message');
 const { TYPE_ACCOUNT } = require('../utils/constants');
 const tool = require('../utils/tool');
+const stripe = require('../services/stripe.service');
 
 const create = catchAsync(async (req, res, next) => {
   const { userId } = tool.getUserIdAndOrganisationId(req);
-  const { name, type: idTypeAccount } = req.body;
-  const typeAccount = Object.values(TYPE_ACCOUNT).find(
-    (e) => e.id === idTypeAccount
-  );
-  const organisation = await organisationService.createProfessionalOrganisation(
+  const { name, siren } = req.body;
+  const nbEmployes = await stripe.getNbEmployes(siren);
+  const customer = await stripe.createCustomer(name, req.user.email);
+  const id = customer.id;
+  let typeAccount = TYPE_ACCOUNT.MicroEntreprise;
+  if (nbEmployes <= 50 && nbEmployes > 10) {
+    typeAccount = TYPE_ACCOUNT.PetiteEntreprise;
+  } else if (nbEmployes <= 250 && nbEmployes > 50) {
+    typeAccount = TYPE_ACCOUNT.MoyenneEntreprise;
+  }
+  const randomString = await stripe.createRandomStringInRedis(id);
+  await organisationService.createProfessionalOrganisation(
     userId,
     name,
-    typeAccount
+    typeAccount,
+    siren,
+    id
   );
+  const subscription = await stripe.subscribeCustomer(id, typeAccount, randomString);
   successF(
-    `${typeAccount.name} organisation as created`,
-    organisation,
+    'organisation as created',
+    subscription,
     200,
     res,
     next
@@ -79,6 +90,23 @@ const getAllCards = catchAsync(async (req, res, next) => {
   successF('cards fetch', cards, 200, res, next);
 });
 
+const validPayment = catchAsync(async (req, res, next) => {
+  const { userId } = tool.getUserIdAndOrganisationId(req);
+  const hash = req.body.hash;
+  const customerId = await stripe.getKeyFromValueInRedis(hash);
+  const organisation = await organisationService.updateOrganisationHavePaid(
+    customerId,
+    userId
+  );
+  await stripe.removeKeyFromRedis(hash);
+  successF('Payement valid', organisation, 200, res, next);  
+});
+
+const getAllUserInOrganisation = catchAsync(async (req, res, next) => {
+  const { userId , currentOrganisationId} = tool.getUserIdAndOrganisationId(req);
+  const allUsers = await organisationService.getAllUserInOrganisation(userId, currentOrganisationId);
+  successF('all users in organisation fetch', allUsers, 200, res, next);
+});
 
 module.exports = {
   create,
@@ -86,5 +114,7 @@ module.exports = {
   getAll,
   leave,
   join,
-  getAllCards
+  getAllCards,
+  validPayment,
+  getAllUserInOrganisation
 };

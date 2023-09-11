@@ -26,8 +26,12 @@ const getUserIdAndOrganisationId = (req) =>{
   return { userId , currentOrganisationId };
 };
 
+const checkIfConnectionStringIsLocal = (connectionString) =>{
+  return connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+};
 
 module.exports = {
   isEmpty,
-  getUserIdAndOrganisationId
+  getUserIdAndOrganisationId,
+  checkIfConnectionStringIsLocal
 };

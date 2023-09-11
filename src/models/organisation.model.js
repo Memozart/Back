@@ -9,6 +9,22 @@ const organisationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    siren: {
+      type: types.String,
+      required: true,
+      trim: true,
+    },
+    havePaid: {
+      type: types.Boolean,
+      required: true,
+      trim: true,
+      default: false,
+    },
+    customerId: {
+      type: types.String,
+      required: false,
+      trim: true,
+    },
     users: [
       {
         type: types.ObjectId,
@@ -28,7 +44,7 @@ const organisationSchema = new mongoose.Schema(
       type: types.String,
       required: true,
       trim: true,
-      default: 'personal',
+      default: 'Mon organisation',
     },
     accountUserLimit: {
       type: types.Number,

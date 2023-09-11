@@ -14,6 +14,7 @@ const request = require('supertest');
 const app = require('../../../src/app');
 
 var { setDefaultTimeout } = require('@cucumber/cucumber');
+const { Review } = require('../../../src/models');
 setDefaultTimeout(60 * 1000);
 
 //#region  INITIALISATION AND CONGIGURATION
@@ -50,7 +51,7 @@ Given('un utilisateur créée une carte', async function () {
     question: 'un utilisateur créée une carte',
     answer: 'un utilisateur créée une carte',
     help: 'un utilisateur créée une carte',
-    theme: new mongoose.Types.ObjectId(fakeData.themeId),
+    theme: new mongoose.Types.ObjectId(fakeData.firstThemeId),
   };
 });
 
@@ -75,7 +76,7 @@ Given('un utilisateur modifie une carte', async function () {
     question: 'question modifiée',
     help: 'aide modifiée',
     answer: 'réponse modifiée',
-    theme: new mongoose.Types.ObjectId(fakeData.themeId),
+    theme: new mongoose.Types.ObjectId(fakeData.firstThemeId),
   };
 });
 
@@ -110,5 +111,32 @@ When('il la valide et envoi la carte à supprimer', async function () {
 
   this.status = status;
   this.message = body?.message;
+});
+//#endregion
+
+//#region Un utilisateur mets à jour le thème de sa carte et toutes les révisions ont le thème qui changent
+Given('un utilisateur modifie le theme d\'une carte', async function () {
+  this.cardUpdate = {
+    question: 'question modifiée',
+    help: 'aide modifiée',
+    answer: 'réponse modifiée',
+    theme: new mongoose.Types.ObjectId(fakeData.secondThemeId),
+  };
+});
+When('il valide pour mettre à jour la carte', async function () {
+  this.token = await setToken('1m');
+  await request(app)
+    .put(`/api/cards/${fakeData.cardId}`)
+    .send(this.cardUpdate)
+    .set('Content-Type', 'application/json')
+    .set('Authorization', `Bearer ${this.token}`)
+    .then((response) => {
+      return response;
+    });
+});
+Then('toutes les révisions liées à la carte doivent avoir le nouveau thème', async function () {
+  const reviews = await Review.find({ card: fakeData.cardId });
+  const tousLesThemesSontSecondTheme = reviews.every((el) => el.theme.toString() === fakeData.secondThemeId);
+  expect(tousLesThemesSontSecondTheme).to.be.true;
 });
 //#endregion

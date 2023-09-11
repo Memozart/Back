@@ -1,7 +1,4 @@
-# MemozartFront
-
-15/07/2023 => migration nouveau serveur
-
+# Memozart-Front
 ## Le projet:
 
 ### L'apprentissage espacé ?

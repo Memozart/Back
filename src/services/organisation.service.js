@@ -16,6 +16,8 @@ const createPersonnalOrganisation = async (user) => {
     accountUserLimit: TYPE_ACCOUNT.Personal.limit_user,
     accountTypeName: TYPE_ACCOUNT.Personal.name,
     accountTypeId: TYPE_ACCOUNT.Personal.id,
+    havePaid: true,
+    siren: '0',
     cards: [],
     admin: [user._id],
   });
@@ -30,7 +32,9 @@ const createPersonnalOrganisation = async (user) => {
 const createProfessionalOrganisation = async (
   userId,
   organisationName,
-  organisationType
+  organisationType,
+  siren,
+  customerId
 ) => {
   if (organisationType === TYPE_ACCOUNT.Personal) {
     logger.error(
@@ -46,6 +50,8 @@ const createProfessionalOrganisation = async (
     accountTypeId: organisationType.id,
     cards: [],
     admin: [userId],
+    customerId: customerId,
+    siren: siren,
   });
 };
 
@@ -84,8 +90,10 @@ const getOrganisationIfAdmin = async (userId, organisationId) => {
  * @returns les organisations dans laquelle l'utilisateur est PRÉSENT sinon rien
  */
 const getAllOrganisationsByUserId = async (userId) => {
+  // users = userId || admin = userId and havePaid = true or unset
   return await Organisation.find({
     $or: [{ users: userId }, { admin: userId }],
+    $and: [{ havePaid: true }, { havePaid: { $ne: null } }],
   });
 };
 
@@ -106,7 +114,16 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
       new: true, // return the updated document instead of the original
       runValidators: true, // run pre query on schema
     }
-  );
+  )
+    .select('name admin users accountUserLimit')
+    .populate({
+      path: 'admin',
+      select: 'firstName lastName _id',
+    })
+    .populate({
+      path: 'users',
+      select: 'firstName lastName _id',
+    });
   return data;
 };
 
@@ -131,7 +148,15 @@ const userLeaveInOrganisation = async (
       new: true, // return the updated document instead of the original
       runValidators: true, // run pre query on schema
     }
-  );
+  ).select('name admin users accountUserLimit')
+    .populate({
+      path: 'admin',
+      select: 'firstName lastName _id',
+    })
+    .populate({
+      path: 'users',
+      select: 'firstName lastName _id',
+    });
 };
 
 const addCardToOrganisation = async (
@@ -201,6 +226,38 @@ const hasRoleToManageCard = async (userId, organisationId, cardId) => {
   return organisation ? true : false;
 };
 
+const updateOrganisationHavePaid = async (customerId, userId) => {
+  return Organisation.findOneAndUpdate(
+    { customerId: customerId, admin: userId },
+    { havePaid: true },
+    {
+      new: true,
+      runValidators: false,
+    }
+  );
+};
+
+
+/**
+ * Retour 
+ * @param {*} userId 
+ * @param {*} organisationId 
+ */
+const getAllUserInOrganisation = async (userId, organisationId) => {
+  return await Organisation.findOne({
+    _id: organisationId,
+    admin: userId
+  }).select('name admin users accountUserLimit')
+    .populate({
+      path: 'admin',
+      select: 'firstName lastName _id',
+    })
+    .populate({
+      path: 'users',
+      select: 'firstName lastName _id',
+    });
+};
+
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,
@@ -213,4 +270,6 @@ module.exports = {
   removeCardToOrganisation,
   getAllUserCard,
   hasRoleToManageCard,
+  updateOrganisationHavePaid,
+  getAllUserInOrganisation
 };
