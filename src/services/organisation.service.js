@@ -3,6 +3,8 @@ const { Organisation } = require('../models');
 const { TYPE_ACCOUNT } = require('../utils/constants');
 const { createLogger } = require('../utils/log');
 const logger = createLogger();
+const reviewService = require('./review.service');
+
 
 /**
  * permets de créer l'espace personnel (qui est une organisation de type 1)
@@ -124,6 +126,10 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
       path: 'users',
       select: 'firstName lastName _id',
     });
+
+  const organisation = await getAllUserCard(userIdAdded, organisationId);
+  const cards = organisation.cards.toObject();
+  await reviewService.addReviewsForNewUser(userIdAdded, organisationId, cards);
   return data;
 };
 
@@ -141,7 +147,7 @@ const userLeaveInOrganisation = async (
   organisationId,
   userIdDeleted
 ) => {
-  return await Organisation.findOneAndUpdate(
+  const userRetired = await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { users: userIdDeleted } },
     {
@@ -157,6 +163,9 @@ const userLeaveInOrganisation = async (
       path: 'users',
       select: 'firstName lastName _id',
     });
+
+  await reviewService.deleteReviewsUserBan(userIdDeleted, organisationId);
+  return userRetired;
 };
 
 const addCardToOrganisation = async (
@@ -237,7 +246,6 @@ const updateOrganisationHavePaid = async (customerId, userId) => {
   );
 };
 
-
 /**
  * Retour 
  * @param {*} userId 
@@ -257,6 +265,7 @@ const getAllUserInOrganisation = async (userId, organisationId) => {
       select: 'firstName lastName _id',
     });
 };
+
 
 module.exports = {
   createPersonnalOrganisation,
