@@ -13,6 +13,7 @@ let mongo;
  */
 const fakeData = {
   userId: '600000000000000000000000',
+  secondUserId: '600000000000000000000001',
   firstThemeId: '611111111111111111111111',
   secondThemeId: '611111111111111111111112',
   organisationId: '644444444444444444444444',
@@ -54,7 +55,9 @@ const startMongoMemory = async () => {
  * Créér l'utilisateur utilisé pendant la phase de test
  */
 const createUser = async () => {
-  await User.create(fakeData.user);
+  const existingDocument = await User.findById(fakeData.user);
+  if(existingDocument === null)
+    await User.create(fakeData.user);
 };
 
 
@@ -86,6 +89,7 @@ const clearDatabaseAndDisconnect= async () => {
 const clearDatabaseAndResetData = async () => {
   await clearAllDatas();
   await createReview();
+  await createUser();
   await initialiseDataset();
 };
 

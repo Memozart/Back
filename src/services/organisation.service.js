@@ -1,8 +1,11 @@
 const { error } = require('winston');
-const { Organisation } = require('../models');
+const { Organisation, User } = require('../models');
 const { TYPE_ACCOUNT } = require('../utils/constants');
 const { createLogger } = require('../utils/log');
 const logger = createLogger();
+const reviewService = require('./review.service');
+
+
 
 /**
  * permets de créer l'espace personnel (qui est une organisation de type 1)
@@ -124,6 +127,10 @@ const addUserInOrganisation = async (userId, organisationId, userIdAdded) => {
       path: 'users',
       select: 'firstName lastName _id',
     });
+
+  const organisation = await getAllUserCard(userIdAdded, organisationId);
+  const cards = organisation.cards.toObject();
+  await reviewService.addReviewsForNewUser(userIdAdded, organisationId, cards);
   return data;
 };
 
@@ -141,7 +148,7 @@ const userLeaveInOrganisation = async (
   organisationId,
   userIdDeleted
 ) => {
-  return await Organisation.findOneAndUpdate(
+  const userRetired = await Organisation.findOneAndUpdate(
     { _id: organisationId, admin: userId },
     { $pull: { users: userIdDeleted } },
     {
@@ -157,6 +164,11 @@ const userLeaveInOrganisation = async (
       path: 'users',
       select: 'firstName lastName _id',
     });
+
+  const personnelOrganisation = await getPersonnelOrganisation(userIdDeleted);
+  const {id : organisationPersonnelId}  = personnelOrganisation;
+  await deleteReviewsUserBanAndChangeToPersonnelOrganisation(userIdDeleted, organisationId, organisationPersonnelId);
+  return userRetired;
 };
 
 const addCardToOrganisation = async (
@@ -237,7 +249,6 @@ const updateOrganisationHavePaid = async (customerId, userId) => {
   );
 };
 
-
 /**
  * Retour 
  * @param {*} userId 
@@ -258,6 +269,24 @@ const getAllUserInOrganisation = async (userId, organisationId) => {
     });
 };
 
+const getPersonnelOrganisation = async (userId ) => {
+  return await Organisation.findOne({admin : userId, accountTypeId : 1});
+};
+
+/**
+ * Supprimer les reviews d'un utilisateur et change son organisation pour mettre la personnel
+ * @param {*} userIdDeleted Id de l'utilisateur
+ * @param {*} oldOrganisationId id de l'ancienne organisation où l'utilisateur à été banni
+ * @param {*} personnalOrganisation l'id de son organisation personnel
+ */
+const deleteReviewsUserBanAndChangeToPersonnelOrganisation = async (userIdDeleted,oldOrganisationId, personnelOrganisationId) => {
+  await reviewService.deleteReviewsUserBan(userIdDeleted, oldOrganisationId);
+  await User.findOneAndUpdate(
+    { _id: userIdDeleted },
+    { currentOrganisation: personnelOrganisationId },
+    { new: false, useFindAndModify: false }
+  );
+};
 module.exports = {
   createPersonnalOrganisation,
   createProfessionalOrganisation,

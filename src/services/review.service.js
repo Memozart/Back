@@ -240,11 +240,36 @@ const updateThemeByIdCardAndIdOrganisation= async (cardId, organisationId, theme
   },{ $set: { theme: themeId } });
 };
 
+const addReviewsForNewUser = async (userId, organisationId, cards) => {
+  const today = dayjs().utc().startOf('day');
+  const stepOne =  await Step.findOne();
+  const reviews = cards.map(card => {
+    return {
+      user: userId,
+      organisation: organisationId,
+      card: card._id,
+      theme: card.theme._id,
+      nextPresentation: today,
+      step: stepOne._id
+    };
+  });
+  await Review.insertMany(reviews);
+};
+
+const deleteReviewsUserBan = async(userId, organisationId) => {
+  return await Review.deleteMany({
+    user: userId,
+    organisation: organisationId
+  });
+};
+
 module.exports = {
   checkUserAnswer,
   nextStep,
   previousStep,
   createReview,
   getOldestReviewByTheme,
-  updateThemeByIdCardAndIdOrganisation
+  updateThemeByIdCardAndIdOrganisation,
+  addReviewsForNewUser,
+  deleteReviewsUserBan
 };
