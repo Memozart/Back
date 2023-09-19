@@ -26,6 +26,13 @@ const changeCurrentOrganisation = catchAsync(async (req, res, next) => {
   successF('Current organisation changed', toReturn, 200, res, next);
 });
 
+const deleteUser = catchAsync(async (req, res, next) =>{
+  const { userId  } = tool.getUserIdAndOrganisationId(req);
+  await userService.deleteUser(userId);
+  await successF('Current user was deleted', true, 200, res, next);
+});
+
 module.exports = {
   changeCurrentOrganisation,
+  deleteUser
 };

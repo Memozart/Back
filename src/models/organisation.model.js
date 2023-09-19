@@ -44,7 +44,7 @@ const organisationSchema = new mongoose.Schema(
       type: types.String,
       required: true,
       trim: true,
-      default: 'Mon organisation',
+      default: 'Organisation personnel',
     },
     accountUserLimit: {
       type: types.Number,

@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Organisation, Review } = require('../models');
 const bcrypt = require('bcryptjs');
 const organisationService = require('../services/organisation.service');
 const mongoose = require('mongoose');
@@ -50,9 +50,56 @@ const changeCurrentOrganisation = async (userId, organisationId) => {
   }).select('-password');
 };
 
+const deleteUser = async(userId) => {
+  // on va regarder s'il est le seul admin dans une organisation 
+  // et qu'il y a des utilisateurs dans cette organisation
+  const organisationAdminWithUser = await Organisation.find({
+    $and: [
+      { admin: userId },
+      { users: { $exists: true, $not: { $size: 0 } } },
+      { admin: { $size: 1 } },
+    ]
+  });
+
+  // alors on lui dit impossible supprimer le compte 
+  // veuillez le transférer
+  if (organisationAdminWithUser.length != 0){
+    throw new Error(
+      `Impossible de supprimer le compte ! Vous êtes le seul administrateur dans ${organisationAdminWithUser.length} compte(s) et vous avez des utilisateurs. Veuillez transférer les droits.`
+    );
+  }
+
+  // supprime les organisation ou l'utilisateur est le seul admin
+  // et n'a pas d'utilisateur sous son organisation (prends compte personnel et +)
+  await Organisation.deleteOne({
+    $and: [
+      { admin: userId },
+      { admin: { $size: 1 } },
+      { users: { $size: 0 } }
+    ]
+  });
+  
+  await Organisation.updateMany({
+    $or : [
+      { admin: userId }, // Cherchez dans le tableau admin
+      { user: userId },  // Cherchez dans le tableau user
+    ],
+    $pull: {   // Utilisez $pull pour supprimer l'userID des tableaux
+      admin: userId,
+      user: userId,
+    },
+  });
+
+  await User.findByIdAndDelete(userId);
+  await Review.deleteMany({
+    user : userId
+  });
+};
+
 module.exports = {
   create,
   login,
   getById,
   changeCurrentOrganisation,
+  deleteUser
 };
