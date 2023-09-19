@@ -65,7 +65,7 @@ const deleteUser = async(userId) => {
   // veuillez le transférer
   if (organisationAdminWithUser.length != 0){
     throw new Error(
-      `Impossible de supprimer le compte ! Vous êtes le seul administrateur dans ${organisationAdminWithUser.length} compte(s) et vous avez des utilisateurs. Veuillez transférer les droits.`
+      `Impossible de supprimer le compte ! Tu es le seul administrateur dans ${organisationAdminWithUser.length} organisation(s) contenant des collaborateurs. Merci de transférer les droits.`
     );
   }
 
