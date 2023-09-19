@@ -89,7 +89,7 @@ When('il tente de se connecter avec les bons credentials', async function () {
 });
 //#endregion
 
-//#region Un utilisateur supprime son compte avec seulement compte personnel => succès
+//#region Un utilisateur supprime son compte et il a seulement son organisation personnel
 When('il souhaite supprimer son compte et qu\'il n\'a qu\'un compte personnel', async function () {
   // on va ajouter un adùinistrateur dans l'organisation où se trouve l'utilisateur
   this.token = await setToken('1m');
@@ -107,7 +107,7 @@ When('il souhaite supprimer son compte et qu\'il n\'a qu\'un compte personnel', 
 
 //#endregion
 
-//#region Quand il souhaite supprimer son compte avec des organisations avec plusieurs admin
+//#region Un utilisateur supprime son compte et dans toutes les organisations où il est présent en tant qu'admin il y a d'autres admin
 When('il souhaite supprimer son compte avec des organisations avec plusieurs admin', async function () {
   await Organisation.updateMany(
     { admin : fakeData.userId }, 
@@ -139,7 +139,7 @@ When('il souhaite supprimer son compte avec des organisations avec plusieurs adm
 });
 //#endregion
 
-//#region Quand il souhaite supprimer son compte avec une organisations ou il est le seul admin 
+//#region Un utilisateur supprime son compte et il y a une ou plusieurs organisation où il est le seul admin et a des utilisateurs dans son orga 
 When('il souhaite supprimer son compte avec une organisations ou il est le seul admin',
   async function () {
     await Organisation.create({
